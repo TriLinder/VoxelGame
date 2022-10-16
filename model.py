@@ -1,9 +1,27 @@
+from typing_extensions import Self
+from matplotlib.pyplot import text
 import pygame as pg
 import numpy as np
 import glm
 import os
 
 shadersDirectory = "shaders"
+
+class Cube :
+    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textrues=["testTexture","testTexture","testTexture","testTexture","testTexture","testTexture"]) -> None:
+        self.faces = []
+
+        self.faces.append({"object": Face(app, pos=(pos[0]+1, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textrues[0]), "visible": True})     # +x
+        self.faces.append({"object": Face(app, pos=(pos[0]-1, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textrues[1]), "visible": True})    # -x
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+1, pos[2]+0), rot=(-90,0,0), texture=textrues[2]), "visible": True})    # +y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-1, pos[2]+0), rot=(90,0,0), texture=textrues[3]), "visible": True})     # -y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+1), rot=(0,0,0), texture=textrues[4]), "visible": True})      # +z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-1), rot=(0,180,0), texture=textrues[5]), "visible": True})    # -z
+    
+    def render(self) :
+        for face in self.faces :
+            if face["visible"] :
+                face["object"].render()
 
 class Face :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="testTexture") -> None:
