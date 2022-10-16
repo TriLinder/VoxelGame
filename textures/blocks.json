@@ -1,0 +1,6 @@
+{
+    "grass": {
+        "model": "cube",
+        "faceTextures": ["grass/sides.png", "grass/sides.png", "grass/top.png", "grass/bottom.png", "grass/sides.png", "grass/sides.png"]
+    }
+}

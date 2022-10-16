@@ -8,15 +8,15 @@ import os
 shadersDirectory = "shaders"
 
 class Cube :
-    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textrues=["testTexture","testTexture","testTexture","testTexture","testTexture","testTexture"]) -> None:
+    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textures=["test.png","test.png","test.png","test.png","test.png","test.png"]) -> None:
         self.faces = []
 
-        self.faces.append({"object": Face(app, pos=(pos[0]+1, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textrues[0]), "visible": True})     # +x
-        self.faces.append({"object": Face(app, pos=(pos[0]-1, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textrues[1]), "visible": True})    # -x
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+1, pos[2]+0), rot=(-90,0,0), texture=textrues[2]), "visible": True})    # +y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-1, pos[2]+0), rot=(90,0,0), texture=textrues[3]), "visible": True})     # -y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+1), rot=(0,0,0), texture=textrues[4]), "visible": True})      # +z
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-1), rot=(0,180,0), texture=textrues[5]), "visible": True})    # -z
+        self.faces.append({"object": Face(app, pos=(pos[0]+1, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textures[0]), "visible": True})     # +x
+        self.faces.append({"object": Face(app, pos=(pos[0]-1, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textures[1]), "visible": True})    # -x
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+1, pos[2]+0), rot=(-90,0,0), texture=textures[2]), "visible": True})    # +y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-1, pos[2]+0), rot=(90,0,0), texture=textures[3]), "visible": True})     # -y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+1), rot=(0,0,0), texture=textures[4]), "visible": True})      # +z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-1), rot=(0,180,0), texture=textures[5]), "visible": True})    # -z
     
     def render(self) :
         for face in self.faces :
@@ -24,7 +24,7 @@ class Cube :
                 face["object"].render()
 
 class Face :
-    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="testTexture") -> None:
+    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="test.png") -> None:
         self.app = app
         self.ctx = app.ctx
         self.vbo = self.getVbo()
@@ -41,8 +41,8 @@ class Face :
     
     def onInit(self) :
         #Texture
-        self.shaderProgram['u_texture_0'] = 0
-        self.texture.use()
+        self.shaderProgram['u_texture_0'] = self.texture.glo
+        self.texture.use(location=self.texture.glo)
     
         #Matrixes
         self.shaderProgram['m_proj'].write(self.app.camera.projM)
@@ -89,7 +89,7 @@ class Face :
         vertexData = self.get_data(verticies, indices)
 
         textureCoords = [ (0, 0), (1, 0), (1, 1), (0, 1) ]
-        textureCoordsIndices = [ (0, 1, 2), (0, 3, 2) ]
+        textureCoordsIndices = [ (0, 1, 2), (2, 3, 0) ]
         
         textureCoordsData = self.get_data(textureCoords, textureCoordsIndices)
 
