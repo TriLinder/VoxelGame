@@ -3,7 +3,9 @@ import moderngl as mgl
 import sys
 
 from model import *
+from scene import Scene
 from camera import Camera
+from textures import TextureManager
 
 class Color :
     def __init__(self, rgb) -> None:
@@ -43,8 +45,11 @@ class GraphicsEngine :
         #Camera
         self.camera = Camera(self)
 
+        #Texture manager
+        self.textureMan = TextureManager(self)
+
         #Scene
-        self.scene = Cube(self)
+        self.scene = Scene(self)
 
     def check_events(self) :
         for e in pg.event.get() :
