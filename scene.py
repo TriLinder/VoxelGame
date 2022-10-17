@@ -1,6 +1,6 @@
 from chunk import Chunk
 
-renderDistance = 3
+renderDistance = 1
 
 class Scene :
     def __init__(self, app) -> None :

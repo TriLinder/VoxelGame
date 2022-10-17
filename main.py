@@ -6,6 +6,7 @@ from model import *
 from scene import Scene
 from camera import Camera
 from textures import TextureManager
+from shaderProgram import ShaderProgramManager
 
 class Color :
     def __init__(self, rgb) -> None:
@@ -45,8 +46,9 @@ class GraphicsEngine :
         #Camera
         self.camera = Camera(self)
 
-        #Texture manager
+        #Texture and shader managers
         self.textureMan = TextureManager(self)
+        self.shaderMan = ShaderProgramManager(self)
 
         #Scene
         self.scene = Scene(self)

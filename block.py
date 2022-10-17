@@ -10,12 +10,23 @@ with open(os.path.join("textures", "blocks.json"), "r") as f :
 
 class Block :
     def __init__(self, app, id, pos) -> None:
+        self.app = app
+
         self.id = id
         self.pos = pos
         self.object = None
+        self.updateObject()
+        
+    
+    def changeId(self, newId) :
+        self.id = newId
+        self.updateObject()
+
+    def updateObject(self) :
+        self.object = None
         
         if not self.id in nonObjectBlocks :
-            self.object = Cube(app, pos=self.pos, textures=self.getTextures())
+            self.object = Cube(self.app, pos=self.pos, textures=self.getTextures())
     
     def getTextures(self) :
         if self.id in blockTextures :

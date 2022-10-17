@@ -1,5 +1,4 @@
-from typing_extensions import Self
-from matplotlib.pyplot import text
+from shaderProgram import ShaderProgramManager
 import pygame as pg
 import numpy as np
 import glm
@@ -27,22 +26,23 @@ class Face :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="test.png") -> None:
         self.app = app
         self.ctx = app.ctx
+        self.textureMan = app.textureMan
         self.vbo = self.getVbo()
-        self.shaderProgram = self.getShaderProgram("default")
+        self.shaderProgram = app.shaderMan.getShaderProgram("default", texture)
         self.vao = self.getVao()
 
         self.pos = pos
         self.setRotation(rot)
-        self.textureID = texture
-        self.texture = self.app.textureMan.getTexture(texture)
+        self.textureID = texture        
 
         self.modelM = self.getModelMatrix()
         self.onInit()
     
     def onInit(self) :
         #Texture
-        self.shaderProgram['u_texture_0'] = self.texture.glo
-        self.texture.use(location=self.texture.glo)
+        texture = self.textureMan.getTexture(self.textureID)
+        self.shaderProgram['u_texture_0'] = texture.glo
+        texture.use(location=texture.glo)
     
         #Matrixes
         self.shaderProgram['m_proj'].write(self.app.camera.projM)
@@ -108,15 +108,5 @@ class Face :
 
         return vbo
 
-    def getShaderProgram(self, shaderName) :
-        with open(os.path.join(shadersDirectory, shaderName + ".vert")) as f :
-            vertexShader = f.read()
-        
-        with open(os.path.join(shadersDirectory, shaderName + ".frag")) as f :
-            fragmentShader = f.read()
-        
-        program = self.ctx.program(vertex_shader=vertexShader, fragment_shader=fragmentShader)
-        return program
-    
     def setRotation(self, rot) :
         self.rot = glm.vec3([glm.radians(a) for a in rot])
