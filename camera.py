@@ -1,4 +1,5 @@
 import pygame as pg
+import math
 import glm
 
 fov = 50
@@ -74,6 +75,12 @@ class Camera :
             self.position += self.up * velocity
         if keys[pg.K_LSHIFT] :
             self.position += self.down * velocity
+        
+    def getChunk(self) :
+        x, y, z = self.position
+        
+        chunkX, chunkZ = math.floor(x / (16*2)), math.floor(z / (16*2))
+        return (chunkX, chunkZ)
 
     def get_view_matrix(self) :
         return glm.lookAt(self.position, self.position + self.forward, self.up)
