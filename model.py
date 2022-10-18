@@ -10,12 +10,12 @@ class Cube :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textures=["test.png","test.png","test.png","test.png","test.png","test.png"]) -> None:
         self.faces = []
 
-        self.faces.append({"object": Face(app, pos=(pos[0]+1, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textures[0]), "visible": True})     # +x
-        self.faces.append({"object": Face(app, pos=(pos[0]-1, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textures[1]), "visible": True})    # -x
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+1, pos[2]+0), rot=(-90,0,0), texture=textures[2]), "visible": True})    # +y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-1, pos[2]+0), rot=(90,0,0), texture=textures[3]), "visible": True})     # -y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+1), rot=(0,0,0), texture=textures[4]), "visible": True})      # +z
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-1), rot=(0,180,0), texture=textures[5]), "visible": True})    # -z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0.5, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textures[0]), "visible": True})     # +x
+        self.faces.append({"object": Face(app, pos=(pos[0]-0.5, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textures[1]), "visible": True})    # -x
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0.5, pos[2]+0), rot=(-90,0,0), texture=textures[2]), "visible": True})    # +y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-0.5, pos[2]+0), rot=(90,0,0), texture=textures[3]), "visible": True})     # -y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+0.5), rot=(0,0,0), texture=textures[4]), "visible": True})      # +z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-0.5), rot=(0,180,0), texture=textures[5]), "visible": True})    # -z
     
     def render(self) :
         for face in self.faces :
@@ -82,7 +82,7 @@ class Face :
         return vao
     
     def getVertexData(self) :
-        verticies = [ (-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0) ]
+        verticies = [ (-0.5, -0.5, 0), (0.5, -0.5, 0), (0.5, 0.5, 0), (-0.5, 0.5, 0) ]
         
         indices = [ (0, 1, 2), (2, 3, 0) ]
         

@@ -3,6 +3,7 @@ import moderngl as mgl
 import sys
 
 from model import *
+from player import Player
 from scene import Scene
 from camera import Camera
 from textures import TextureManager
@@ -52,6 +53,9 @@ class GraphicsEngine :
 
         #Scene
         self.scene = Scene(self)
+
+        #Player
+        self.player = Player(self)
 
     def check_events(self) :
         for e in pg.event.get() :

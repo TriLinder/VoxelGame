@@ -16,6 +16,8 @@ class Camera :
         self.position = glm.vec3(position)
         self.yaw = yaw
         self.pitch = pitch
+
+        self.freeCam = True
         
         self.up = glm.vec3(0, 1, 0)
         self.down = self.up * -1
@@ -31,8 +33,9 @@ class Camera :
         self.projM = self.get_projection_matrix()
     
     def update(self) :
-        self.move()
-        self.rotate()
+        if self.freeCam :
+            self.move()
+            self.rotate()
         self.updateCameraVectors()
         self.viewM = self.get_view_matrix()
 
@@ -79,7 +82,7 @@ class Camera :
     def getChunk(self) :
         x, y, z = self.position
         
-        chunkX, chunkZ = math.floor(x / (16*2)), math.floor(z / (16*2))
+        chunkX, chunkZ = math.floor(x / 16), math.floor(z / 16)
         return (chunkX, chunkZ)
 
     def get_view_matrix(self) :

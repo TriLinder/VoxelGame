@@ -1,9 +1,8 @@
 import time
 
-import chunk
 from block import Block
 
-heightLimit = 2
+heightLimit = 16
 chunkSize = 16
 
 class Chunk :
@@ -19,6 +18,7 @@ class Chunk :
 
         self.clear()
         #self.linesTest()
+        self.generatePlatform()
         self.cullAllBlocks()
 
         print(f"Chunk generation took {round(time.time() - startTime, 2)} seconds. {self.totalBlockCount} blocks generated ({round((time.time() - startTime) / (self.totalBlockCount), 3)}s per block).")
@@ -33,14 +33,19 @@ class Chunk :
             for y in range(heightLimit) :
                 self.blocks[x].append([])
                 for z in range(chunkSize) :
-                    print(f"{(blocksGenerated/(self.totalBlockCount/100))}%")
-                    self.blocks[x][y].append(Block(self.app, "grass", (x*2+(self.chunkX*chunkSize*2), y*2, z*2+(self.chunkZ*chunkSize*2))))
+                    #print(f"{(blocksGenerated/(self.totalBlockCount/100))}%")
+                    self.blocks[x][y].append(Block(self.app, "air", (x+(self.chunkX*chunkSize), y, z+(self.chunkZ*chunkSize))))
                     blocksGenerated += 1
 
     def linesTest(self) :
         for a in range(chunkSize) :
             self.blocks[a][a][a].changeId("debugBlock")
             self.blocks[a*-1][a][a*-1].changeId("debugBlock")
+
+    def generatePlatform(self) :
+        for x in range(chunkSize) :
+            for z in range(chunkSize) :
+                self.blocks[x][0][z].changeId("grass")
 
     def unload(self) :
         pass
