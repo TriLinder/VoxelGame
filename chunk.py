@@ -7,7 +7,7 @@ from block import Block
 heightLimit = 32
 chunkSize = 16
 
-noSave = False
+noSave = True
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:

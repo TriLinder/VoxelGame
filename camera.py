@@ -75,9 +75,9 @@ class Camera :
         if keys[pg.K_d] :
             self.position += self.right * velocity
         if keys[pg.K_SPACE] :
-            self.position += self.up * velocity
+            self.position += glm.vec3(0, 1, 0) * velocity
         if keys[pg.K_LSHIFT] :
-            self.position += self.down * velocity
+            self.position += glm.vec3(0, -1, 0) * velocity
         
     def getChunk(self) :
         x, y, z = self.position
