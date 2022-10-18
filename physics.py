@@ -27,6 +27,7 @@ class EntityPhysics :
         yaw, pitch = glm.radians(self.entity.yaw), glm.radians(self.entity.pitch)
 
         self.forward.x = glm.cos(yaw) * glm.cos(pitch)
+        #self.forward.y = glm.sin(pitch)
         self.forward.y = 0
         self.forward.z = glm.sin(yaw) * glm.cos(pitch)
 
@@ -45,20 +46,26 @@ class EntityPhysics :
         speed = self.walkingSpeed
         keys = pg.key.get_pressed()
 
+        nonYForward = self.forward
+        nonYForward[1] = self.entity.position[1]
+
+        nonYBackwards = nonYForward * -1
+
         velocity = (self.velX, self.velY, self.velZ)
         
         if keys[pg.K_w] :
-            velocity = self.forward * speed
+            velocity = nonYForward * speed
         if keys[pg.K_a] :
             velocity = self.left * speed
         if keys[pg.K_s] :
-            velocity = self.backwards * speed
+            velocity = nonYBackwards * speed
         if keys[pg.K_d] :
             velocity = self.right * speed
         if keys[pg.K_SPACE] :
             self.jump()
         
         self.velX, self.velY, self.velZ = velocity
+        print(self.velY)
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
     def gravity(self) :
@@ -113,7 +120,7 @@ class EntityPhysics :
         blocks = chunk.blocks
 
         try :
-            block = blocks[floor(entityX)][ceil(entityY)][floor(entityZ)]
+            block = blocks[floor(entityX)-(chunkX*16)][ceil(entityY)][floor(entityZ)-(chunkZ*16)]
             self.entity.onGround = block.physicalBlock
         except IndexError : #Above chunk height limit
             self.entity.onGround = False
@@ -126,7 +133,7 @@ class EntityPhysics :
         self.updateMovementVectors()
         self.onGroundCheck()
 
-        if self.controlMovement :
+        if self.controlMovement and not self.app.camera.freeCam :
             self.movementControl()
 
         self.gravity()

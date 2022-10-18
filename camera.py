@@ -17,7 +17,7 @@ class Camera :
         self.yaw = yaw
         self.pitch = pitch
 
-        self.freeCam = False
+        self.freeCam = True
         
         self.up = glm.vec3(0, 1, 0)
         self.down = self.up * -1

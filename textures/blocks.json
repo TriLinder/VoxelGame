@@ -7,5 +7,15 @@
     "grass": {
         "model": "cube",
         "faceTextures": ["grass/sides.png", "grass/sides.png", "grass/top.png", "grass/bottom.png", "grass/sides.png", "grass/sides.png"]
+    },
+
+    "dirt": {
+        "model": "cube",
+        "faceTextures": ["dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png"]
+    },
+
+    "stone": {
+        "model": "cube",
+        "faceTextures": ["stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png"]
     }
 }

@@ -37,5 +37,6 @@ class Player :
         if self.inVoid() :
             self.position[1] = 30
 
-        self.camera.position = self.position + glm.vec3(0, self.cameraHeight, 0)
-        self.camera.update()
+        if not self.camera.freeCam :
+            self.camera.position = self.position + glm.vec3(0, self.cameraHeight, 0)
+            self.camera.update()

@@ -1,4 +1,5 @@
 from chunk import Chunk
+from worldGen import WorldGen
 
 renderDistance = 1
 
@@ -6,6 +7,8 @@ class Scene :
     def __init__(self, app) -> None :
         self.app = app
         self.camera = self.app.camera
+
+        self.worldGen = WorldGen()
 
         self.loadedChunks = {}
     

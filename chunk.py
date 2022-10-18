@@ -2,12 +2,13 @@ import time
 
 from block import Block
 
-heightLimit = 16
+heightLimit = 32
 chunkSize = 16
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:
         self.app = app
+        self.worldGen = app.scene.worldGen
         self.blocks = []
         self.totalBlockCount = chunkSize*chunkSize*heightLimit
 
@@ -17,8 +18,11 @@ class Chunk :
         startTime = time.time()
 
         self.clear()
+        
         #self.linesTest()
-        self.generatePlatform()
+        #self.generatePlatform()
+        self.generate()
+
         self.cullAllBlocks()
 
         print(f"Chunk generation took {round(time.time() - startTime, 2)} seconds. {self.totalBlockCount} blocks generated ({round((time.time() - startTime) / (self.totalBlockCount), 3)}s per block).")
@@ -46,6 +50,20 @@ class Chunk :
         for x in range(chunkSize) :
             for z in range(chunkSize) :
                 self.blocks[x][0][z].changeId("grass")
+    
+    def generateHeight(self) :
+        for x in range(chunkSize) :
+            for z in range(chunkSize) :
+                terrainHeight = self.worldGen.getTerrainY(x+(self.chunkX*16), z+(self.chunkZ*16), 5, 14)
+                for y in range(terrainHeight-3) :
+                    self.blocks[x][y][z].changeId("stone")
+                for y in range(terrainHeight-3, terrainHeight) :
+                    self.blocks[x][y][z].changeId("dirt")
+                
+                self.blocks[x][terrainHeight][z].changeId("grass")
+
+    def generate(self) :
+        self.generateHeight()
 
     def unload(self) :
         pass
