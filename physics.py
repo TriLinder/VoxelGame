@@ -7,7 +7,7 @@ class EntityPhysics :
         self.app = app
         self.entity = entity
 
-        self.terminalVelocity = 0.1
+        self.terminalVelocity = 0.01
         
         self.up = glm.vec3(0, 0, 0)
         self.down = glm.vec3(0, 0, 0)
@@ -21,7 +21,7 @@ class EntityPhysics :
         self.velZ = 0
 
         self.controlMovement = False
-        self.walkingSpeed = 0.05
+        self.walkingSpeed = 0.5
 
     def updateMovementVectors(self) :
         yaw, pitch = glm.radians(self.entity.yaw), glm.radians(self.entity.pitch)
@@ -42,25 +42,24 @@ class EntityPhysics :
         if not self.entity.onGround :
             return
         
-        speed = self.walkingSpeed * self.app.deltaTime
+        speed = self.walkingSpeed
         keys = pg.key.get_pressed()
 
         velocity = (self.velX, self.velY, self.velZ)
         
         if keys[pg.K_w] :
-            velocity += self.forward * speed
+            velocity = self.forward * speed
         if keys[pg.K_a] :
-            velocity += self.left * speed
+            velocity = self.left * speed
         if keys[pg.K_s] :
-            velocity += self.backwards * speed
+            velocity = self.backwards * speed
         if keys[pg.K_d] :
-            velocity += self.right * speed
+            velocity = self.right * speed
         if keys[pg.K_SPACE] :
             self.jump()
         
         self.velX, self.velY, self.velZ = velocity
-        self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
-        print(self.velX, self.velY, self.velZ)
+        #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
     def gravity(self) :
         if not self.entity.onGround :
@@ -127,11 +126,11 @@ class EntityPhysics :
         self.updateMovementVectors()
         self.onGroundCheck()
 
+        if self.controlMovement :
+            self.movementControl()
+
         self.gravity()
         self.friction()
         self.stopSlowMovement()
-
-        if self.controlMovement :
-            self.movementControl()
 
         self.move()
