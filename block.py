@@ -5,6 +5,8 @@ import os
 nonObjectBlocks = ["air"]
 transparentBlocks = ["air"]
 
+nonPhysicBlocks = ["air"]
+
 with open(os.path.join("textures", "blocks.json"), "r") as f :
     blockTextures = json.loads(f.read()) 
 
@@ -12,15 +14,18 @@ class Block :
     def __init__(self, app, id, pos) -> None:
         self.app = app
 
-        self.id = id
+        self.changeId(id)
         self.pos = pos
         self.object = None
-        self.updateObject()
+
+        self.physicalBlock = False
         
     
     def changeId(self, newId) :
         self.id = newId
         self.updateObject()
+
+        self.physicalBlock = not newId in nonPhysicBlocks
 
     def updateObject(self) :
         self.object = None

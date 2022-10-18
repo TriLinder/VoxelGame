@@ -17,7 +17,7 @@ class Camera :
         self.yaw = yaw
         self.pitch = pitch
 
-        self.freeCam = True
+        self.freeCam = False
         
         self.up = glm.vec3(0, 1, 0)
         self.down = self.up * -1
@@ -35,7 +35,7 @@ class Camera :
     def update(self) :
         if self.freeCam :
             self.move()
-            self.rotate()
+        self.rotate()
         self.updateCameraVectors()
         self.viewM = self.get_view_matrix()
 

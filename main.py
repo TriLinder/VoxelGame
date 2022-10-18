@@ -66,7 +66,7 @@ class GraphicsEngine :
     
     def render(self) :
         #Clear framebuffer
-        self.ctx.clear(color=(Color((42, 42, 42)).normalize()))
+        self.ctx.clear(color=((42/255, 42/255, 42/255)))
 
         #Render the scene
         self.scene.render()
@@ -78,9 +78,12 @@ class GraphicsEngine :
         self.time = pg.time.get_ticks() / 1000
     
     def run(self) :
+        self.render()
+        
         while True :
             self.getTime()
             self.check_events()
+            self.player.tick()
             self.camera.update()
             self.render()
             self.deltaTime = self.clock.tick(self.maxFramerate)
