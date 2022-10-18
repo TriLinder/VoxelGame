@@ -17,5 +17,15 @@
     "stone": {
         "model": "cube",
         "faceTextures": ["stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png"]
+    },
+
+    "log": {
+        "model": "cube",
+        "faceTextures": ["log/sides.png", "log/sides.png", "leaves/all.png", "dirt/all.png", "log/sides.png", "log/sides.png"]
+    },
+
+    "leaves": {
+        "model": "cube",
+        "faceTextures": ["leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png"]
     }
 }

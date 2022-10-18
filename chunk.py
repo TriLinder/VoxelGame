@@ -1,6 +1,8 @@
+import chunk
 import time
 
 from block import Block
+from worldGen import WorldGen
 
 heightLimit = 32
 chunkSize = 16
@@ -14,6 +16,8 @@ class Chunk :
 
         self.chunkX = chunkCoords[0]
         self.chunkZ = chunkCoords[1]
+
+        self.heightMap = {}
 
         startTime = time.time()
 
@@ -55,15 +59,48 @@ class Chunk :
         for x in range(chunkSize) :
             for z in range(chunkSize) :
                 terrainHeight = self.worldGen.getTerrainY(x+(self.chunkX*16), z+(self.chunkZ*16), 5, 14)
+                self.heightMap[(x, z)] = terrainHeight
                 for y in range(terrainHeight-3) :
                     self.blocks[x][y][z].changeId("stone")
                 for y in range(terrainHeight-3, terrainHeight) :
                     self.blocks[x][y][z].changeId("dirt")
                 
                 self.blocks[x][terrainHeight][z].changeId("grass")
+    
+    def generateTrees(self) :
+        for x in range(chunkSize) :
+            for z in range(chunkSize) :
+                terrainHeight = self.heightMap[x, z]
+
+                totalX, totalZ = int(x+(self.chunkX*chunkSize)), int(z+(self.chunkZ*chunkSize))
+
+                shouldHaveTree = self.worldGen.shouldHaveTree(totalX, totalZ)
+                if shouldHaveTree :
+                    tree = self.worldGen.generateTree(totalX, totalZ)
+
+                    #Logs
+                    for y in range(terrainHeight, terrainHeight + tree["height"]) :
+                        self.blocks[x][y][z].changeId("log")
+                    
+                    #Leaves base
+                    for leaveX in range(5) :
+                        for leaveZ in range(5) :
+                            try :
+                                if not tree["leavesToRemove"][leaveX*leaveZ] :
+                                    self.blocks[x + leaveX - 2][terrainHeight + tree["height"] - 3][z + leaveZ - 2].changeId("leaves")
+
+                                if (leaveX in range(1,4)) and (leaveZ in range(1,4)) :
+                                    self.blocks[x + leaveX - 2][terrainHeight + tree["height"] - 2][z + leaveZ - 2].changeId("leaves")
+                                    if not tree["leavesToRemove"][leaveX+leaveZ] :
+                                        self.blocks[x + leaveX - 2][terrainHeight + tree["height"] - 1][z + leaveZ - 2].changeId("leaves")
+                                        self.blocks[x + leaveX - 2][terrainHeight + tree["height"] - 3][z + leaveZ - 0].changeId("leaves")
+                            except IndexError : #Leaves out of chunk
+                                pass
+
 
     def generate(self) :
         self.generateHeight()
+        self.generateTrees()
 
     def unload(self) :
         pass
