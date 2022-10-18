@@ -1,11 +1,13 @@
-import chunk
+import os
 import time
+import json
 
 from block import Block
-from worldGen import WorldGen
 
 heightLimit = 32
 chunkSize = 16
+
+noSave = False
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:
@@ -103,7 +105,7 @@ class Chunk :
         self.generateTrees()
 
     def unload(self) :
-        pass
+        self.saveChunk()
     
     def getBlockID(self, x, y, z) :
         try :
@@ -116,6 +118,48 @@ class Chunk :
             for y in range(heightLimit) :
                 for z in range(chunkSize) :
                     self.blocks[x][y][z].cull(surroundingBlocks=[self.getBlockID(x+1,y,z), self.getBlockID(x-1,y,z), self.getBlockID(x,y+1,z), self.getBlockID(x,y-1,z), self.getBlockID(x,y,z+1), self.getBlockID(x,y,z-1)])
+
+    def chunkToDict(self) :
+        j = {}
+
+        blocksPallete = {}
+        blocksPalleteIndex = 0
+
+        blocks = []
+
+        for x in range(chunkSize) :
+            blocks.append([])
+            for y in range(heightLimit) :
+                blocks[x].append([])
+                for z in range(chunkSize) :
+                    block = self.blocks[x][y][z]
+
+                    if not block.id in blocksPallete :
+                        blocksPallete[block.id] = blocksPalleteIndex
+                        blocksPalleteIndex += 1
+
+                    blocks[x][y].append(blocksPallete[block.id])
+        
+        j["dimensions"] = (chunkSize, heightLimit, chunkSize)
+        j["pallete"] = list(blocksPallete)
+        j["blocks"] = blocks
+        j["timestamp"] = round(time.time())
+
+        return j
+    
+    def saveChunk(self) :
+        if noSave :
+            return
+
+        j = self.chunkToDict()
+
+        directory = os.path.join("saves", self.app.scene.worldName, "chunks")
+        path = os.path.join(directory, f"{self.chunkX}_{self.chunkZ}.json")
+
+        os.makedirs(directory, exist_ok=True)
+
+        with open(path, "w") as f :
+            f.write(json.dumps(j).replace(' ', ''))
 
     def render(self) :
         startTime = time.time()

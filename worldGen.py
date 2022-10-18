@@ -1,7 +1,6 @@
 import time
 import random
 from perlin_noise import PerlinNoise
-from regex import F
 
 class WorldGen :
     def __init__(self, seed=round(time.time())) -> None:

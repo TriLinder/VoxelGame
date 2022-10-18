@@ -8,6 +8,8 @@ class Scene :
         self.app = app
         self.camera = self.app.camera
 
+        self.worldName = "world0"
+
         self.worldGen = WorldGen()
 
         self.loadedChunks = {}
