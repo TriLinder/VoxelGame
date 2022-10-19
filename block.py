@@ -18,6 +18,8 @@ class Block :
         self.pos = pos
         self.object = None
 
+        self.model = None
+
         self.physicalBlock = False
         
     
@@ -31,7 +33,12 @@ class Block :
         self.object = None
         
         if not self.id in nonObjectBlocks :
-            self.object = Cube(self.app, pos=self.pos, textures=self.getTextures())
+            self.model = blockTextures[self.id]["model"]
+
+            if self.model == "cube" :
+                self.object = Cube(self.app, pos=self.pos, textures=self.getTextures())
+            elif self.model == "billboard" :
+                self.object = Billboard(self.app, pos=self.pos, textures=self.getTextures())
     
     def getTextures(self) :
         if self.id in blockTextures :
@@ -42,11 +49,26 @@ class Block :
         if not self.object :
             return
         
-        for i in range(6) :
-            surroundingBlock = surroundingBlocks[i]
+        if self.model == "cube" :
+            for i in range(6) :
+                surroundingBlock = surroundingBlocks[i]
 
-            faceVisible = (not surroundingBlock) or (surroundingBlock in transparentBlocks)
-            self.object.faces[i]["visible"] = faceVisible
+                faceVisible = (not surroundingBlock) or (surroundingBlock in transparentBlocks)
+                self.object.faces[i]["visible"] = faceVisible
+        elif self.model == "billboard" :
+            visible = False
+
+            for i in range(6) :
+                surroundingBlock = surroundingBlocks[i]
+
+                if (not surroundingBlock) or (surroundingBlock in transparentBlocks) :
+                    visible = True
+                    break
+            
+            self.object.faces[0]["visible"] = visible
+            self.object.faces[1]["visible"] = visible
+            self.object.faces[2]["visible"] = visible
+            self.object.faces[3]["visible"] = visible
 
     def render(self) :
         if self.object :

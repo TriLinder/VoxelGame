@@ -22,6 +22,20 @@ class Cube :
             if face["visible"] :
                 face["object"].render()
 
+class Billboard :
+    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textures=["test.png","test.png"]) -> None:
+        self.faces = []
+
+        self.faces.append({"object": Face(app, pos=(pos[0], pos[1], pos[2]), rot=(0,45,0), texture=textures[0]), "visible": True})
+        self.faces.append({"object": Face(app, pos=(pos[0], pos[1], pos[2]), rot=(0,-45,0), texture=textures[1]), "visible": True})
+        self.faces.append({"object": Face(app, pos=(pos[0], pos[1], pos[2]), rot=(0,225,0), texture=textures[1]), "visible": True})
+        self.faces.append({"object": Face(app, pos=(pos[0], pos[1], pos[2]), rot=(0,-225,0), texture=textures[1]), "visible": True})
+    
+    def render(self) :
+        for face in self.faces :
+            if face["visible"] :
+                face["object"].render()
+
 class Face :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="test.png") -> None:
         self.app = app
