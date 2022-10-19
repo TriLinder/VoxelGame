@@ -23,8 +23,7 @@ class Player :
     def getChunk(self) :
         x, y, z = self.position
         
-        chunkX, chunkZ = math.floor(x / 16), math.floor(z / 16)
-        return (chunkX, chunkZ)
+        return self.scene.chunkCoordsFromBlockCoords(x, z)
     
     def inVoid(self) :
         return self.position[1] < -5

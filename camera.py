@@ -17,7 +17,7 @@ class Camera :
         self.yaw = yaw
         self.pitch = pitch
 
-        self.freeCam = True
+        self.freeCam = False
         
         self.up = glm.vec3(0, 1, 0)
         self.down = self.up * -1
@@ -82,8 +82,7 @@ class Camera :
     def getChunk(self) :
         x, y, z = self.position
         
-        chunkX, chunkZ = math.floor(x / 16), math.floor(z / 16)
-        return (chunkX, chunkZ)
+        return self.app.scene.chunkCoordsFromBlockCoords(x, z)
 
     def get_view_matrix(self) :
         return glm.lookAt(self.position, self.position + self.forward, self.up)

@@ -31,7 +31,7 @@ class Chunk :
 
         self.cullAllBlocks()
 
-        print(f"Chunk generation took {round(time.time() - startTime, 2)} seconds. {self.totalBlockCount} blocks generated ({round((time.time() - startTime) / (self.totalBlockCount), 3)}s per block).")
+        #print(f"Chunk generation took {round(time.time() - startTime, 2)} seconds. {self.totalBlockCount} blocks generated ({round((time.time() - startTime) / (self.totalBlockCount), 3)}s per block).")
 
     def clear(self) :
         self.blocks = []
@@ -160,6 +160,15 @@ class Chunk :
 
         with open(path, "w") as f :
             f.write(json.dumps(j).replace(' ', ''))
+
+    def getBlockFromAbsoulteCoords(self, pos) :
+        x, y, z = pos
+        x, y, z = round(x), round(y), round(z)
+        
+        try :
+            return self.blocks[x - (self.chunkX*chunkSize)][y][z - (self.chunkZ*chunkSize)]
+        except IndexError :
+            return None
 
     def render(self) :
         startTime = time.time()

@@ -27,8 +27,7 @@ class EntityPhysics :
         yaw, pitch = glm.radians(self.entity.yaw), glm.radians(self.entity.pitch)
 
         self.forward.x = glm.cos(yaw) * glm.cos(pitch)
-        #self.forward.y = glm.sin(pitch)
-        self.forward.y = 0
+        self.forward.y = glm.sin(pitch)
         self.forward.z = glm.sin(yaw) * glm.cos(pitch)
 
         self.forward = glm.normalize(self.forward)
@@ -47,7 +46,7 @@ class EntityPhysics :
         keys = pg.key.get_pressed()
 
         nonYForward = self.forward
-        nonYForward[1] = self.entity.position[1]
+        nonYForward.y = 0
 
         nonYBackwards = nonYForward * -1
 
@@ -65,7 +64,6 @@ class EntityPhysics :
             self.jump()
         
         self.velX, self.velY, self.velZ = velocity
-        print(self.velY)
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
     def gravity(self) :
@@ -102,7 +100,7 @@ class EntityPhysics :
             self.entity.onGround = False
             self.move()
 
-            self.velY = 5
+            self.velY = 15
             self.move()
 
     def onGroundCheck(self) :
@@ -120,14 +118,44 @@ class EntityPhysics :
         blocks = chunk.blocks
 
         try :
-            block = blocks[floor(entityX)-(chunkX*16)][ceil(entityY)][floor(entityZ)-(chunkZ*16)]
+            block = blocks[round(entityX)-(chunkX*16)][round(entityY)][round(entityZ)-(chunkZ*16)]
             self.entity.onGround = block.physicalBlock
         except IndexError : #Above chunk height limit
             self.entity.onGround = False
+
+        if self.entity.onGround :
+            self.entity.position[1] = round(self.entity.position[1])
+
         return self.entity.onGround
 
+    def safePositionCheck(self, pos) :
+        x, y, z = pos
+
+        y += 1
+
+        chunk = self.app.scene.chunkObjectFromBlockCoords(x, z)
+        if chunk :
+            block = chunk.getBlockFromAbsoulteCoords((x, y, z))
+            if block :
+                if block.pos[1] < y :
+                    return True
+
+                return not block.physicalBlock
+        else :
+            return True
+        
+        print("PHYSICS: Safe pos check failed")
+        return False
+
     def move(self) :
-        self.entity.position += glm.vec3((self.velX / 100) * self.app.deltaTime, (self.velY / 100) * self.app.deltaTime, (self.velZ / 100) * self.app.deltaTime)
+        newPos = self.entity.position + glm.vec3((self.velX / 100) * self.app.deltaTime, (self.velY / 100) * self.app.deltaTime, (self.velZ / 100) * self.app.deltaTime)
+        
+        if (self.safePositionCheck(newPos)) :
+            self.entity.position = newPos
+        else :
+            self.velX = 0
+            self.velY = 0
+            self.velZ = 0
 
     def tick(self) :
         self.updateMovementVectors()
