@@ -11,11 +11,16 @@ with open(os.path.join("textures", "blocks.json"), "r") as f :
     blockTextures = json.loads(f.read()) 
 
 class Block :
-    def __init__(self, app, id, pos) -> None:
+    def __init__(self, app, chunk, id, pos) -> None:
         self.app = app
+        self.chunk = chunk
 
         self.changeId(id)
         self.pos = pos
+
+        x, y, z = pos
+        self.chunkRelativePos = (x - (chunk.chunkX*16), y, z - (chunk.chunkZ*16))
+
         self.object = None
 
         self.model = None

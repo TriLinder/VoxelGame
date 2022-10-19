@@ -44,7 +44,7 @@ class Chunk :
                 self.blocks[x].append([])
                 for z in range(chunkSize) :
                     #print(f"{(blocksGenerated/(self.totalBlockCount/100))}%")
-                    self.blocks[x][y].append(Block(self.app, "air", (x+(self.chunkX*chunkSize), y, z+(self.chunkZ*chunkSize))))
+                    self.blocks[x][y].append(Block(self.app, self, "air", (x+(self.chunkX*chunkSize), y, z+(self.chunkZ*chunkSize))))
                     blocksGenerated += 1
 
     def linesTest(self) :
@@ -113,11 +113,29 @@ class Chunk :
         except IndexError :
             return None
     
+    def cullBlock(self, pos) :
+        x, y, z = pos
+
+        try :
+            self.blocks[x][y][z].cull(surroundingBlocks=[self.getBlockID(x+1,y,z), self.getBlockID(x-1,y,z), self.getBlockID(x,y+1,z), self.getBlockID(x,y-1,z), self.getBlockID(x,y,z+1), self.getBlockID(x,y,z-1)])
+        except IndexError :
+            pass
+
     def cullAllBlocks(self) :
         for x in range(chunkSize) :
             for y in range(heightLimit) :
                 for z in range(chunkSize) :
-                    self.blocks[x][y][z].cull(surroundingBlocks=[self.getBlockID(x+1,y,z), self.getBlockID(x-1,y,z), self.getBlockID(x,y+1,z), self.getBlockID(x,y-1,z), self.getBlockID(x,y,z+1), self.getBlockID(x,y,z-1)])
+                    self.cullBlock( (x, y, z) )
+
+    def cullNeighbors(self, pos) :
+        x, y, z = pos
+
+        self.cullBlock( (x+1, y+0, z+0) )
+        self.cullBlock( (x-1, y+0, z+0) )
+        self.cullBlock( (x+0, y+1, z+0) )
+        self.cullBlock( (x+0, y-1, z+0) )
+        self.cullBlock( (x+0, y+0, z+1) )
+        self.cullBlock( (x+0, y+0, z-1) )
 
     def chunkToDict(self) :
         j = {}

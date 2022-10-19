@@ -45,7 +45,7 @@ class EntityPhysics :
         speed = self.walkingSpeed
         keys = pg.key.get_pressed()
 
-        nonYForward = self.forward
+        nonYForward = glm.vec3(self.forward[0], self.forward[1], self.forward[2]) #Copy by value
         nonYForward.y = 0
 
         nonYBackwards = nonYForward * -1

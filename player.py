@@ -1,6 +1,7 @@
-from xml.dom import InvalidModificationErr
 import glm
 import math
+import pygame as pg
+import time
 
 from physics import EntityPhysics
 
@@ -18,6 +19,9 @@ class Player :
         self.yaw = 0
         self.pitch = 0
 
+        self.lookingAt = None
+        self.lastPunchTimestamp = -1
+
         self.cameraHeight = 2
 
     def getChunk(self) :
@@ -27,6 +31,35 @@ class Player :
     
     def inVoid(self) :
         return self.position[1] < -5
+    
+    def losBlock(self, maxRange) :
+        forward = self.physics.forward
+
+        for r in range(maxRange) :
+            pos = (self.position + glm.vec3(0, self.cameraHeight, 0)) + forward * r
+
+            chunk = self.scene.chunkObjectFromBlockCoords(pos.x, pos.z)
+            if chunk :
+                block = chunk.getBlockFromAbsoulteCoords(pos)
+
+                if block and block.physicalBlock :
+                    return block
+
+        return None
+    
+    def blockBreaking(self) :
+        if pg.mouse.get_pressed()[0] : #LMB Pressed
+            self.lookingAt = self.losBlock(8)
+            
+            if self.lookingAt and time.time() - self.lastPunchTimestamp > 0.25 :
+                self.lastPunchTimestamp = time.time()
+
+                block = self.lookingAt
+                block.changeId("air")
+                chunk = block.chunk
+                chunk.cullNeighbors(block.chunkRelativePos)
+        else :
+            self.lastPunchTimestamp = -1
 
     def tick(self) :
         self.yaw, self.pitch = self.camera.yaw, self.camera.pitch
@@ -39,3 +72,5 @@ class Player :
         if not self.camera.freeCam :
             self.camera.position = self.position + glm.vec3(0, self.cameraHeight, 0)
             self.camera.update()
+        
+        self.blockBreaking()
