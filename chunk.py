@@ -7,7 +7,7 @@ from block import Block
 heightLimit = 32
 chunkSize = 16
 
-noSave = True
+noSave = False
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:
@@ -27,7 +27,8 @@ class Chunk :
         
         #self.linesTest()
         #self.generatePlatform()
-        self.generate()
+        if noSave or (not self.loadChunk()) :
+            self.generate()
 
         self.cullAllBlocks()
 
@@ -158,7 +159,7 @@ class Chunk :
 
                     blocks[x][y].append(blocksPallete[block.id])
         
-        j["dimensions"] = (chunkSize, heightLimit, chunkSize)
+        j["dimensions"] = (chunkSize, heightLimit)
         j["pallete"] = list(blocksPallete)
         j["blocks"] = blocks
         j["timestamp"] = round(time.time())
@@ -178,6 +179,33 @@ class Chunk :
 
         with open(path, "w") as f :
             f.write(json.dumps(j).replace(' ', ''))
+        
+    def dictToChunk(self, j) :
+        blocksPallete = j["pallete"]
+        blocks = j["blocks"]
+        chunkSize, heightLimit = j["dimensions"]
+
+        for x in range(chunkSize) :
+            for y in range(heightLimit) :
+                for z in range(chunkSize) :
+                    blockPalleteIndex = blocks[x][y][z]
+                    blockId = blocksPallete[blockPalleteIndex]
+
+                    self.blocks[x][y][z].changeId(blockId)
+
+    def loadChunk(self) :
+        directory = os.path.join("saves", self.app.scene.worldName, "chunks")
+        path = os.path.join(directory, f"{self.chunkX}_{self.chunkZ}.json")
+
+        if not os.path.isfile(path) :
+            return False
+        
+        with open(path, "r") as f :
+            j = json.loads(f.read())
+        
+        self.dictToChunk(j)
+        
+        return True
 
     def getBlockFromAbsoulteCoords(self, pos) :
         x, y, z = pos
