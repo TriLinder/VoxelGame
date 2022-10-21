@@ -7,7 +7,9 @@ from block import Block
 heightLimit = 32
 chunkSize = 16
 
-noSave = False
+waterLevel = 5
+
+noSave = True
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:
@@ -75,6 +77,9 @@ class Chunk :
             for z in range(chunkSize) :
                 terrainHeight = self.heightMap[x, z]
 
+                if terrainHeight <= waterLevel :
+                    return False
+
                 totalX, totalZ = int(x+(self.chunkX*chunkSize)), int(z+(self.chunkZ*chunkSize))
 
                 shouldHaveTree = self.worldGen.shouldHaveTree(totalX, totalZ)
@@ -100,10 +105,17 @@ class Chunk :
                             except IndexError : #Leaves out of chunk
                                 pass
 
+    def generateWater(self) :
+        for y in range(waterLevel) :
+            for x in range(chunkSize) :
+                for z in range(chunkSize) :
+                    if self.blocks[x][y][z].id == "air" :
+                        self.blocks[x][y][z].changeId("water")
 
     def generate(self) :
         self.generateHeight()
         self.generateTrees()
+        self.generateWater()
 
     def unload(self) :
         self.saveChunk()
