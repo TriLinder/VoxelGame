@@ -149,6 +149,56 @@ class Chunk :
         self.cullBlock( (x+0, y-1, z+0) )
         self.cullBlock( (x+0, y+0, z+1) )
         self.cullBlock( (x+0, y+0, z-1) )
+    
+    def attemptToSpreadFluid(self, pos, fluidBlockId) :
+        x, y, z = pos
+
+        try :
+            block = self.blocks[x][y][z]
+            
+            if "brokenByFluids" in block.flags :
+                block.changeId(fluidBlockId)
+
+                self.updateNeighborFluids(pos)
+                self.cullNeighbors(pos)
+        except IndexError :
+            if (abs(x) >= chunkSize) or (abs(z) >= chunkSize) : #Attempt to spread fluid to neighbor chunk, if loaded
+                absoluteX, absoluteZ = x + (self.chunkX * chunkSize), z + (self.chunkZ * chunkSize)
+                chunk = self.app.scene.chunkObjectFromBlockCoords(absoluteX, absoluteZ)
+
+                if chunk :
+                    block = chunk.getBlockFromAbsoulteCoords( (absoluteX, y, absoluteZ) )
+                    if block :
+                        chunk.attemptToSpreadFluid(block.chunkRelativePos, fluidBlockId)
+
+
+    def updateFluid(self, pos) :
+        x, y, z = pos
+
+        try :
+            block = self.blocks[x][y][z]
+
+            if not block.isFluid :
+                return
+
+            self.attemptToSpreadFluid( (x+1, y+0, z+0), block.id )
+            self.attemptToSpreadFluid( (x-1, y+0, z+0), block.id )
+            self.attemptToSpreadFluid( (x+0, y+0, z+1), block.id )
+            self.attemptToSpreadFluid( (x+0, y+0, z-1), block.id )
+        except IndexError :
+            pass
+
+    def updateNeighborFluids(self, pos) :
+        x, y, z = pos
+
+        self.updateFluid( (x, y, z) )
+
+        self.updateFluid( (x+1, y+0, z+0) )
+        self.updateFluid( (x-1, y+0, z+0) )
+        self.updateFluid( (x+0, y+1, z+0) )
+        self.updateFluid( (x+0, y-1, z+0) )
+        self.updateFluid( (x+0, y+0, z+1) )
+        self.updateFluid( (x+0, y+0, z-1) )
 
     def chunkToDict(self) :
         j = {}

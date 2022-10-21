@@ -70,6 +70,7 @@ class Player :
                 block.changeId("air")
                 chunk = block.chunk
                 chunk.cullNeighbors(block.chunkRelativePos)
+                chunk.updateNeighborFluids(block.chunkRelativePos)
         elif pg.mouse.get_pressed()[2] : #RMB Pressed, place block
             if self.selectedBlockId and self.lookingAtEmptyBlock and time.time() - self.lastPunchTimestamp > 0.25 :
                 self.lastPunchTimestamp = time.time()

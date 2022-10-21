@@ -8,7 +8,7 @@
     "air" :{
         "model": null,
         "faceTextures": [],
-        "flags": ["nonPhysical", "transparent", "nonObject"]
+        "flags": ["nonPhysical", "transparent", "nonObject", "brokenByFluids"]
     }
 
     ,"grass": {
