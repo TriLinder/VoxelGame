@@ -23,6 +23,8 @@ class EntityPhysics :
         self.controlMovement = False
         self.walkingSpeed = 0.5
 
+        self.inFluid = False
+
     def updateMovementVectors(self) :
         yaw, pitch = glm.radians(self.entity.yaw), glm.radians(self.entity.pitch)
 
@@ -39,9 +41,6 @@ class EntityPhysics :
         self.backwards = self.forward * -1
 
     def movementControl(self) :
-        if not self.entity.onGround :
-            return
-        
         speed = self.walkingSpeed
         keys = pg.key.get_pressed()
 
@@ -50,17 +49,20 @@ class EntityPhysics :
 
         nonYBackwards = nonYForward * -1
 
+        if self.inFluid :
+            speed *= 0.25
+
         velocity = (self.velX, self.velY, self.velZ)
-        
-        if keys[pg.K_w] :
+
+        if keys[pg.K_w] and self.entity.onGround :
             velocity = nonYForward * speed
-        if keys[pg.K_a] :
+        if keys[pg.K_a] and self.entity.onGround :
             velocity = self.left * speed
-        if keys[pg.K_s] :
+        if keys[pg.K_s] and self.entity.onGround :
             velocity = nonYBackwards * speed
-        if keys[pg.K_d] :
+        if keys[pg.K_d] and self.entity.onGround :
             velocity = self.right * speed
-        if keys[pg.K_SPACE] :
+        if keys[pg.K_SPACE] and self.entity.onGround :
             self.jump()
 
         self.app.ctx.wireframe = keys[pg.K_g] #Show wireframe when held down
@@ -71,7 +73,10 @@ class EntityPhysics :
     def gravity(self) :
         if not self.entity.onGround :
             if self.velY < self.terminalVelocity :
-                self.velY -= 0.005 * self.app.deltaTime
+                if not self.inFluid :
+                    self.velY -= 0.005 * self.app.deltaTime
+                else :
+                    self.velY -= (0.005 * 0.25) * self.app.deltaTime
         elif self.entity.onGround and self.velY < 0 :
             self.velY = 0
     
@@ -129,6 +134,15 @@ class EntityPhysics :
             self.entity.position[1] = round(self.entity.position[1])
 
         return self.entity.onGround
+    
+    def inFluidCheck(self) :
+        x, y, z = self.entity.position
+
+        chunk = self.app.scene.chunkObjectFromBlockCoords(x, z)
+        if chunk :
+            block = chunk.getBlockFromAbsoulteCoords((x, y + 0.5, z))
+            if block :
+                self.inFluid = block.isFluid
 
     def safePositionCheck(self, pos) :
         x, y, z = pos
@@ -162,6 +176,7 @@ class EntityPhysics :
     def tick(self) :
         self.updateMovementVectors()
         self.onGroundCheck()
+        self.inFluidCheck()
 
         if self.controlMovement and not self.app.camera.freeCam :
             self.movementControl()

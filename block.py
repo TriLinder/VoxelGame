@@ -21,6 +21,7 @@ class Block :
         self.model = None
 
         self.physicalBlock = False
+        self.isFluid = False
         self.flags = []
         
     
@@ -29,6 +30,7 @@ class Block :
 
         self.flags = blockInfo[self.id]["flags"]
         self.physicalBlock = not "nonPhysical" in self.flags
+        self.isFluid = "fluid" in self.flags
 
         self.updateObject()
 
@@ -39,7 +41,12 @@ class Block :
             self.model = blockInfo[self.id]["model"]
 
             if self.model == "cube" :
-                self.object = Cube(self.app, pos=self.pos, textures=self.getTextures())
+                x, y, z = self.pos
+
+                if self.isFluid :
+                    y -= 0.25
+
+                self.object = Cube(self.app, pos=(x, y, z), textures=self.getTextures())
             elif self.model == "billboard" :
                 self.object = Billboard(self.app, pos=self.pos, textures=self.getTextures())
     
@@ -56,7 +63,11 @@ class Block :
             for i in range(6) :
                 surroundingBlock = surroundingBlocks[i]
 
-                faceVisible = (not surroundingBlock) or ("transparent" in blockInfo[surroundingBlock]["flags"])
+                if surroundingBlock :
+                    flags = blockInfo[surroundingBlock]["flags"]
+                    faceVisible = ("transparent" in flags) or (not self.isFluid and "fluid" in flags)
+                else :
+                    faceVisible = True
                 self.object.faces[i]["visible"] = faceVisible
         elif self.model == "billboard" :
             visible = False
