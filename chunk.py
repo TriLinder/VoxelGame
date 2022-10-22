@@ -119,6 +119,11 @@ class Chunk :
 
     def unload(self) :
         self.saveChunk()
+        
+        for x in range(chunkSize) :
+            for y in range(heightLimit) :
+                for z in range(chunkSize) :
+                    self.blocks[x][y][z].destroy()
     
     def getBlockID(self, x, y, z) :
         try :

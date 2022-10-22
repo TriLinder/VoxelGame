@@ -58,6 +58,10 @@ class Scene :
             return self.loadedChunks[(chunkX, chunkZ)]
         except KeyError :
             return None
+    
+    def destroy(self) :
+        for chunk in self.loadedChunks.values() :
+            chunk.unload()
 
     def render(self) :
         self.loadNearChunks()

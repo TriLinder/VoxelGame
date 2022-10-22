@@ -88,6 +88,10 @@ class Block :
             self.object.faces[2]["visible"] = visible
             self.object.faces[3]["visible"] = visible
 
+    def destroy(self) :
+        if self.object :
+            self.object.destroy()
+
     def render(self) :
         if self.object :
             self.object.render()

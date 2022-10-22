@@ -21,6 +21,10 @@ class Cube :
         for face in self.faces :
             if face["visible"] :
                 face["object"].render()
+    
+    def destroy(self) :
+        for face in self.faces :
+            face["object"].destroy()
 
 class Billboard :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textures=["test.png","test.png"]) -> None:
@@ -35,6 +39,10 @@ class Billboard :
         for face in self.faces :
             if face["visible"] :
                 face["object"].render()
+
+    def destroy(self) :
+        for face in self.faces :
+            face["object"].destroy()
 
 class Face :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="test.png") -> None:
@@ -88,7 +96,6 @@ class Face :
     
     def destroy(self) :
         self.vbo.release()
-        self.shaderProgram.release()
         self.vao.release()
     
     def getVao(self) :
