@@ -3,11 +3,10 @@ import math
 from chunk import Chunk
 from worldGen import WorldGen
 
-renderDistance = 1
-
 class Scene :
     def __init__(self, app) -> None :
         self.app = app
+        self.config = app.config
         self.camera = self.app.camera
 
         self.worldName = "world0"
@@ -22,7 +21,7 @@ class Scene :
 
         chunksToLoad.append( (currentChunkX, currentChunkY) )
 
-        for i in range(1, renderDistance) :
+        for i in range(1, self.config.renderDistance) :
             chunksToLoad.append( ((currentChunkX+i, currentChunkY+0)) )
             chunksToLoad.append( ((currentChunkX-i, currentChunkY+0)) )
             chunksToLoad.append( ((currentChunkX+0, currentChunkY+i)) )
@@ -64,7 +63,8 @@ class Scene :
             chunk.unload()
 
     def render(self) :
-        self.loadNearChunks()
+        if self.app.inGame :
+            self.loadNearChunks()
 
         for chunk in self.loadedChunks.values() :
             chunk.render()

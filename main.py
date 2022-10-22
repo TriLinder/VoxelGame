@@ -5,6 +5,7 @@ import sys
 from model import *
 from player import Player
 from scene import Scene
+from config import Config
 from ui import UserInterface
 from camera import Camera
 from textures import TextureManager
@@ -20,11 +21,9 @@ class Color :
         return (self.r/255, self.g/255, self.b/255)
 
 class GraphicsEngine :
-    def __init__(self, windowSize=(1600, 900), maxFramerate=60) :
+    def __init__(self, windowSize=(1600, 900)) :
         pg.init()
         self.windowSize = windowSize
-
-        self.maxFramerate = maxFramerate
 
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3)
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
@@ -49,6 +48,9 @@ class GraphicsEngine :
         self.gamePaused = True
         self.inGame = False
 
+        #Config
+        self.config = Config(self)
+
         #Camera
         self.camera = Camera(self)
 
@@ -61,17 +63,23 @@ class GraphicsEngine :
 
         #User interface
         self.ui = UserInterface(self)
+        self.pgEvents = []
 
         #Player
         self.player = Player(self)
 
 
+    def quit(self) :
+        self.scene.destroy()
+        pg.quit()
+        sys.exit(0)
+
     def check_events(self) :
-        for e in pg.event.get() :
+        self.pgEvents = pg.event.get()
+
+        for e in self.pgEvents :
             if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_BACKSPACE) :
-                self.scene.destroy()
-                pg.quit()
-                sys.exit(0)
+                self.quit()
             if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame :
                 self.gamePaused = not self.gamePaused
                 self.ui.redrawNextFrame = True
@@ -105,7 +113,7 @@ class GraphicsEngine :
             self.camera.update()
             self.ui.tick()
             self.render()
-            self.deltaTime = self.clock.tick(self.maxFramerate)
+            self.deltaTime = self.clock.tick(self.config.fpsLimit)
 
 if __name__ == "__main__" :
     app = GraphicsEngine()
