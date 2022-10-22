@@ -88,6 +88,9 @@ class Player :
             self.lastPunchTimestamp = -1
 
     def tick(self) :
+        if self.app.gamePaused :
+            return
+
         self.yaw, self.pitch = self.camera.yaw, self.camera.pitch
 
         self.physics.tick()
@@ -97,6 +100,5 @@ class Player :
 
         if not self.camera.freeCam :
             self.camera.position = self.position + glm.vec3(0, self.cameraHeight, 0)
-            self.camera.update()
         
         self.blockBreaking()

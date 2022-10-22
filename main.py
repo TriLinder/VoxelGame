@@ -45,6 +45,9 @@ class GraphicsEngine :
         self.time = 0
         self.deltaTime = 0
 
+        #Unpause the game
+        self.gamePaused = False
+
         #Camera
         self.camera = Camera(self)
 
@@ -61,12 +64,16 @@ class GraphicsEngine :
         #Player
         self.player = Player(self)
 
+
     def check_events(self) :
         for e in pg.event.get() :
-            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE) :
+            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_BACKSPACE) :
                 self.scene.destroy()
                 pg.quit()
                 sys.exit(0)
+            if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE :
+                self.gamePaused = not self.gamePaused
+                self.ui.redrawNextFrame = True
             if e.type == pg.WINDOWSIZECHANGED :
                 self.windowSize = (e.x, e.y)
 

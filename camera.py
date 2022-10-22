@@ -33,6 +33,10 @@ class Camera :
         self.projM = self.get_projection_matrix()
     
     def update(self) :
+        if self.app.gamePaused :
+            pg.mouse.get_rel() #Prevent camera from turning a lot after unpause
+            return
+        
         if self.freeCam :
             self.move()
         self.rotate()

@@ -55,6 +55,7 @@ class UserInterface :
 
         self.elements.append( Crosshair(self) )
         self.elements.append( DebugScreen(self) )
+        self.elements.append( PauseMenu(self) )
 
     def resize(self) :
         self.res = self.app.windowSize
@@ -102,13 +103,19 @@ class UserInterface :
 
         self.debugElementsLastFrame = self.showDebugElements
     
-    def drawText(self, pos, font, string, color=(255,255,255), antialias=True) :
+    def drawText(self, pos, font, string, color=(255,255,255), antialias=True, center=False) :
         textSurface = font.render(string, antialias, color)
         textRect = textSurface.get_rect()
 
-        textRect.x, textRect.y = pos
+        if not center :
+            textRect.x, textRect.y = pos
+        else :
+            textRect.center = pos
+
         self.surface.blit(textSurface, textRect)
 
+
+# -- IN GAME -- #
 
 class Crosshair :
     def __init__(self, ui) -> None :
@@ -128,7 +135,7 @@ class Crosshair :
         self.width = math.floor(self.vh / 53)
     
     def tick(self) :
-        pass
+        self.visible = not self.ui.app.gamePaused
 
     def render(self) :
         centerX = math.floor(self.ui.res[0] / 2)
@@ -203,3 +210,32 @@ class DebugScreen :
             if not line == "" :
                 self.ui.drawText((self.fontSize / 3, y), self.font, line, antialias=False)
             y += self.fontSize
+
+# -- MENU -- #
+class PauseMenu :
+    def __init__(self, ui) -> None :
+        self.ui = ui
+        
+        self.visible = False
+        self.isDebugElement = False
+        
+        self.resize()
+    
+    def tick(self) :
+        self.visible = self.ui.app.gamePaused
+
+        if self.visible :
+            self.ui.redrawNextFrame = True
+    
+    def resize(self) :
+        self.fontSize = 80
+        self.font = pg.font.SysFont(self.ui.defaultFontName, self.fontSize, bold=True)
+
+    def render(self) :
+        centerX = math.floor(self.ui.res[0] / 2)
+        centerY = math.floor(self.ui.res[1] / 2)
+        
+        overlayColor = (0, 0, 0, 100) #RGBA
+        pg.draw.rect(self.ui.surface, overlayColor, [0, 0, self.ui.res[0], self.ui.res[1]]) #Overlay
+
+        self.ui.drawText((centerX, centerY), self.font, "GAME PAUSED", center=True)
