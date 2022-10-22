@@ -5,6 +5,7 @@ import sys
 from model import *
 from player import Player
 from scene import Scene
+from ui import UserInterface
 from camera import Camera
 from textures import TextureManager
 from shaderProgram import ShaderProgramManager
@@ -54,6 +55,9 @@ class GraphicsEngine :
         #Scene
         self.scene = Scene(self)
 
+        #User interface
+        self.ui = UserInterface(self)
+
         #Player
         self.player = Player(self)
 
@@ -68,8 +72,9 @@ class GraphicsEngine :
         #Clear framebuffer
         self.ctx.clear(color=((42/255, 42/255, 42/255)))
 
-        #Render the scene
+        #Render the UI and the scene
         self.scene.render()
+        self.ui.render()
 
         #Swap buffers
         pg.display.flip()
