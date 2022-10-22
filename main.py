@@ -67,6 +67,11 @@ class GraphicsEngine :
                 self.scene.destroy()
                 pg.quit()
                 sys.exit(0)
+            if e.type == pg.WINDOWSIZECHANGED :
+                self.windowSize = (e.x, e.y)
+
+                self.camera.aspectRatio = e.x / e.y
+                self.ui.resize()
     
     def render(self) :
         #Clear framebuffer
