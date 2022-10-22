@@ -52,6 +52,8 @@ class MainMenu :
         self.ui.app.gamePaused = False
         self.ui.app.inGame = True
         self.ui.showDebugElements = False
+
+        self.ui.app.camera.updateProjM()
     
     def settingsButton(self) :
         self.menu.currentScreen = "settings"
@@ -78,7 +80,9 @@ class SettingsMenu :
         self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Settings')
         
         self.pgm.add.range_slider("Render distance:", default=self.config.renderDistance, range_values=(1, 8), increment=1, onchange=self.renderDistanceSlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("Mouse sensitivity:", default=self.config.mouseSensitivity, range_values=(1, 100), increment=1, onchange=self.mouseSensitivitySlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("FPS Limit:", default=self.config.fpsLimit, range_values=(15, 120), increment=1, onchange=self.fpsLimitSlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("FOV:", default=self.config.fov, range_values=(15, 120), increment=1, onchange=self.fovSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.button("KEYBINDS", self.keybindsButton)
         self.pgm.add.button("GO BACK", self.goBackButton)
 
@@ -89,6 +93,14 @@ class SettingsMenu :
     def fpsLimitSlider(self, value) :
         value = round(value)
         self.config.fpsLimit = value
+    
+    def mouseSensitivitySlider(self, value) :
+        value = round(value)
+        self.config.mouseSensitivity = value
+    
+    def fovSlider(self, value) :
+        value = round(value)
+        self.config.fov = value
 
     def keybindsButton(self) :
         self.menu.currentScreen = "keybinds"

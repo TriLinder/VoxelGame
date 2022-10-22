@@ -1,7 +1,8 @@
 import json
 import os
 
-defaultConfig = {"renderDistance": 1, "fpsLimit": 60, "keybinds": {"forward": 119, "backwards": 115, "left": 97, "right": 100, "jump": 32, "wireframe": 103, "debugInfo": 104}}
+defaultConfig = {"renderDistance": 1, "fpsLimit": 60, "keybinds": {"forward": 119, "backwards": 115, "left": 97, "right": 100, "jump": 32, "wireframe": 103, "debugInfo": 104},
+                "mouseSensitivity": 10, "fov": 70}
 
 class Config :
     def __init__(self, app) -> None :
@@ -20,11 +21,15 @@ class Config :
         self.renderDistance = self.config["renderDistance"]
         self.fpsLimit = self.config["fpsLimit"]
         self.keybinds = self.config["keybinds"]
-    
+        self.mouseSensitivity = self.config["mouseSensitivity"]
+        self.fov = self.config["fov"]
+
     def updateDict(self) :
         self.config["renderDistance"] = self.renderDistance
         self.config["fpsLimit"] = self.fpsLimit
         self.config["keybinds"] = self.keybinds
+        self.config["mouseSensitivity"] = self.mouseSensitivity
+        self.config["fov"] = self.fov
 
     def writeToFile(self) :
         self.updateDict()

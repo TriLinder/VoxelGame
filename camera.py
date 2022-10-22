@@ -2,15 +2,15 @@ import pygame as pg
 import math
 import glm
 
-fov = 50
 near = 0.1
 far = 100
 movementSpeed = 0.01
-mouseSensitivity = 0.1
 
 class Camera :
     def __init__(self, app, position=(2, 3, 3), yaw=-90, pitch=0) -> None:
         self.app = app
+        self.config = app.config
+
         self.aspectRatio = app.windowSize[0] / app.windowSize[1]
 
         self.position = glm.vec3(position)
@@ -30,7 +30,7 @@ class Camera :
         self.viewM = self.get_view_matrix()
 
         #Projection matrix
-        self.projM = self.get_projection_matrix()
+        self.updateProjM()
     
     def update(self) :
         if self.app.gamePaused :
@@ -60,6 +60,8 @@ class Camera :
     
     def rotate(self) :
         relX, relY = pg.mouse.get_rel()
+
+        mouseSensitivity = self.config.mouseSensitivity / 100
 
         self.yaw += relX * mouseSensitivity
         self.pitch += (relY * mouseSensitivity) * -1
@@ -92,6 +94,9 @@ class Camera :
         return glm.lookAt(self.position, self.position + self.forward, self.up)
 
     def get_projection_matrix(self) :
-        projectionMatrix = glm.perspective(glm.radians(fov), self.aspectRatio, near, far)
+        projectionMatrix = glm.perspective(glm.radians(self.config.fov), self.aspectRatio, near, far)
 
         return projectionMatrix
+    
+    def updateProjM(self) :
+        self.projM = self.get_projection_matrix()
