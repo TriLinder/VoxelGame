@@ -75,6 +75,7 @@ class EntityPhysics :
                 self.disableGravity = True
                 self.swimUp()
         self.app.ctx.wireframe = keys[pg.K_g] #Show wireframe when held down
+        self.app.ui.showDebugElements = keys[pg.K_h] #Show debug UI elements when held down
 
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
