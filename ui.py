@@ -6,6 +6,8 @@ import math
 import os
 import psutil
 
+from menu import Menu
+
 alwaysShowDebugElements = False
 
 class UserInterface :
@@ -14,7 +16,7 @@ class UserInterface :
         self.ctx = app.ctx
         
         self.elements = []
-        self.showDebugElements = False
+        self.showDebugElements = True
         self.debugElementsLastFrame = False
 
         self.redrawNextFrame = True
@@ -57,6 +59,8 @@ class UserInterface :
         self.elements.append( DebugScreen(self) )
         self.elements.append( PauseMenu(self) )
 
+        self.elements.append( Menu(self) )
+
     def resize(self) :
         self.res = self.app.windowSize
 
@@ -70,6 +74,9 @@ class UserInterface :
             element.resize()
         
     def tick(self) :
+        pg.event.set_grab(not self.app.gamePaused)
+        pg.mouse.set_visible(self.app.gamePaused)
+
         for element in self.elements :
             element.tick()
 
@@ -86,7 +93,7 @@ class UserInterface :
 
             if not self.ctx.wireframe : #Hide UI when in wireframe mode
                 for element in self.elements :
-                    if element.visible and ((not element.isDebugElement) or (element.isDebugElement and self.showDebugElements)) :
+                    if element.visible and ((not element.isDebugElement) or (element.isDebugElement and self.showDebugElements)) and (element.showInMenu or (self.app.inGame)) :
                         element.render()
 
             self.writeToTexture()
@@ -122,6 +129,7 @@ class Crosshair :
         self.ui = ui
 
         self.visible = True
+        self.showInMenu = False
         self.isDebugElement = False
 
         self.color = (255, 255, 255, 200) #RGBA
@@ -154,6 +162,7 @@ class DebugScreen :
         self.ui = ui
 
         self.visible = True
+        self.showInMenu = False
         self.isDebugElement = True
 
         self.fontColor = (255, 255, 255, 255) #RGBA
@@ -211,12 +220,14 @@ class DebugScreen :
                 self.ui.drawText((self.fontSize / 3, y), self.font, line, antialias=False)
             y += self.fontSize
 
-# -- MENU -- #
+# -- PAUSE MENU -- #
+
 class PauseMenu :
     def __init__(self, ui) -> None :
         self.ui = ui
         
         self.visible = False
+        self.showInMenu = False
         self.isDebugElement = False
         
         self.resize()

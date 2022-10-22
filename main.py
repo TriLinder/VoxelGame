@@ -45,8 +45,9 @@ class GraphicsEngine :
         self.time = 0
         self.deltaTime = 0
 
-        #Unpause the game
-        self.gamePaused = False
+        #Game info
+        self.gamePaused = True
+        self.inGame = False
 
         #Camera
         self.camera = Camera(self)
@@ -71,7 +72,7 @@ class GraphicsEngine :
                 self.scene.destroy()
                 pg.quit()
                 sys.exit(0)
-            if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE :
+            if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame :
                 self.gamePaused = not self.gamePaused
                 self.ui.redrawNextFrame = True
             if e.type == pg.WINDOWSIZECHANGED :
