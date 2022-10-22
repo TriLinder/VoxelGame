@@ -6,7 +6,7 @@ import math
 import os
 import psutil
 
-alwaysShowDebugElements = True
+alwaysShowDebugElements = False
 
 class UserInterface :
     def __init__(self, app) -> None:
@@ -15,6 +15,9 @@ class UserInterface :
         
         self.elements = []
         self.showDebugElements = False
+        self.debugElementsLastFrame = False
+
+        self.redrawNextFrame = True
 
         self.defaultFontName = pg.font.get_default_font()
 
@@ -64,27 +67,40 @@ class UserInterface :
 
         for element in self.elements :
             element.resize()
+        
+    def tick(self) :
+        for element in self.elements :
+            element.tick()
 
     def writeToTexture(self) :
-        self.surface = pg.transform.flip(self.surface, False, True)
-
         textureData = self.surface.get_view('1')
         self.texture.write(textureData)
 
     def render(self) :
-        self.surface.fill((0, 0, 0, 0))
+        if self.redrawNextFrame :
+            self.surface.fill((0, 0, 0, 0))
 
-        if not self.ctx.wireframe : #Hide UI when in wireframe mode
-            for element in self.elements :
-                if element.visible and (alwaysShowDebugElements or (not element.isDebugElement or (element.isDebugElement and self.showDebugElements))) :
-                    element.render()
+            if alwaysShowDebugElements :
+                self.showDebugElements = True
 
-        self.writeToTexture()
+            if not self.ctx.wireframe : #Hide UI when in wireframe mode
+                for element in self.elements :
+                    if element.visible and ((not element.isDebugElement) or (element.isDebugElement and self.showDebugElements)) :
+                        element.render()
+
+            self.writeToTexture()
+            
+            self.redrawNextFrame = False
         
         self.ctx.enable(mgl.BLEND)
         self.texture.use(location=0)
         self.quadFs.render(mode=mgl.TRIANGLE_STRIP)
         self.ctx.disable(mgl.BLEND)
+
+        if not self.debugElementsLastFrame == self.showDebugElements :
+            self.redrawNextFrame = True
+
+        self.debugElementsLastFrame = self.showDebugElements
     
     def drawText(self, pos, font, string, color=(255,255,255), antialias=True) :
         textSurface = font.render(string, antialias, color)
@@ -110,6 +126,9 @@ class Crosshair :
 
         self.size = math.floor(self.vh / 22)
         self.width = math.floor(self.vh / 53)
+    
+    def tick(self) :
+        pass
 
     def render(self) :
         centerX = math.floor(self.ui.res[0] / 2)
@@ -133,6 +152,8 @@ class DebugScreen :
         self.fontColor = (255, 255, 255, 255) #RGBA
         self.fontBackground = (0, 0, 0)
 
+        self.lines = []
+
         self.resize()
     
     def resize(self) :
@@ -141,6 +162,11 @@ class DebugScreen :
 
         self.fontSize = math.floor(self.vh / 5.3)
         self.font = pg.font.SysFont(self.ui.defaultFontName, self.fontSize, bold=True)
+
+    def tick(self) :
+        if self.visible and self.ui.showDebugElements :
+            self.update()
+            self.ui.redrawNextFrame = True
 
     def update(self) :
         self.lines = []
@@ -172,8 +198,6 @@ class DebugScreen :
         self.lines.append(f"Seed: {self.ui.app.scene.worldGen.seed}")
 
     def render(self) :
-        self.update()
-
         y = self.fontSize / 3
         for line in self.lines :
             if not line == "" :

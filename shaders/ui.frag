@@ -11,5 +11,6 @@ in vec2 uv;
 
 void main() {
     // Simply look up the color from the texture
-    f_color = texture(surface, uv);
+    f_color = texture(surface, vec2(uv.x, uv.y * -1));
+    //f_color = vec3(1, 1, 0);
 }
