@@ -7,7 +7,7 @@ from block import Block
 heightLimit = 32
 chunkSize = 16
 
-waterLevel = 5
+waterLevel = 4
 
 noSave = True
 
@@ -75,7 +75,7 @@ class Chunk :
     def generateTrees(self) :
         for x in range(chunkSize) :
             for z in range(chunkSize) :
-                terrainHeight = self.heightMap[x, z]
+                terrainHeight = self.heightMap[x, z] + 1
 
                 if terrainHeight <= waterLevel :
                     return False
@@ -106,7 +106,7 @@ class Chunk :
                                 pass
 
     def generateWater(self) :
-        for y in range(waterLevel) :
+        for y in range(waterLevel + 1) :
             for x in range(chunkSize) :
                 for z in range(chunkSize) :
                     if self.blocks[x][y][z].id == "air" :
@@ -183,6 +183,7 @@ class Chunk :
 
             self.attemptToSpreadFluid( (x+1, y+0, z+0), block.id )
             self.attemptToSpreadFluid( (x-1, y+0, z+0), block.id )
+            self.attemptToSpreadFluid( (x+0, y-1, z+0), block.id )
             self.attemptToSpreadFluid( (x+0, y+0, z+1), block.id )
             self.attemptToSpreadFluid( (x+0, y+0, z-1), block.id )
         except IndexError :

@@ -7,8 +7,9 @@ class EntityPhysics :
         self.app = app
         self.entity = entity
 
-        self.terminalVelocity = 0.01
-        
+        self.terminalVelocity = 2
+        self.disableGravity = False
+
         self.up = glm.vec3(0, 0, 0)
         self.down = glm.vec3(0, 0, 0)
         self.right = glm.vec3(0, 0, 0)
@@ -51,6 +52,8 @@ class EntityPhysics :
 
         if self.inFluid :
             speed *= 0.25
+        
+        self.disableGravity = False
 
         velocity = (self.velX, self.velY, self.velZ)
 
@@ -62,17 +65,22 @@ class EntityPhysics :
             velocity = nonYBackwards * speed
         if keys[pg.K_d] and self.entity.onGround :
             velocity = self.right * speed
-        if keys[pg.K_SPACE] and self.entity.onGround :
-            self.jump()
 
-        self.app.ctx.wireframe = keys[pg.K_g] #Show wireframe when held down
-        
         self.velX, self.velY, self.velZ = velocity
+
+        if keys[pg.K_SPACE] and self.entity.onGround :
+            if not self.inFluid :
+                self.jump()
+            else :
+                self.disableGravity = True
+                self.swimUp()
+        self.app.ctx.wireframe = keys[pg.K_g] #Show wireframe when held down
+
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
     def gravity(self) :
-        if not self.entity.onGround :
-            if self.velY < self.terminalVelocity :
+        if (not self.entity.onGround) and (not self.disableGravity) :
+            if not abs(self.velY) > self.terminalVelocity :
                 if not self.inFluid :
                     self.velY -= 0.005 * self.app.deltaTime
                 else :
@@ -107,8 +115,12 @@ class EntityPhysics :
             self.entity.onGround = False
             self.move()
 
-            self.velY = 15
+            self.velY = 1.5
             self.move()
+    
+    def swimUp(self) :
+        self.entity.position += glm.vec3(0, 0.01*self.app.deltaTime, 0)
+        self.entity.onGround = False
 
     def onGroundCheck(self) :
         chunkX, chunkZ = self.entity.getChunk()

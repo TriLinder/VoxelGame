@@ -69,6 +69,10 @@ class Block :
                 else :
                     faceVisible = True
                 self.object.faces[i]["visible"] = faceVisible
+            
+            if self.pos[1] <= 0 : #Hide faces in void
+                self.object.faces[3]["visible"] = False
+                
         elif self.model == "billboard" :
             visible = False
 

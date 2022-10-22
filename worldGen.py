@@ -9,7 +9,7 @@ class WorldGen :
         self.heightNoise = PerlinNoise(octaves=10, seed=seed)
 
     def seedFromCoords(self, x, z) :
-        return self.seed * (x+z) * x * z + (self.seed/2)
+        return round(self.seed * (x+z) * x * z + (self.seed/2))
 
     def getTerrainY(self, x, z, min, max) :
         n = self.heightNoise([x/100, z/100])
