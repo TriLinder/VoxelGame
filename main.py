@@ -4,6 +4,7 @@ import sys
 
 from model import *
 from player import Player
+from saveManager import SaveManager
 from scene import Scene
 from config import Config
 from ui import UserInterface
@@ -57,6 +58,9 @@ class GraphicsEngine :
         #Texture and shader managers
         self.textureMan = TextureManager(self)
         self.shaderMan = ShaderProgramManager(self)
+
+        #Save manager
+        self.saveMan = SaveManager(self)
 
         #Scene
         self.scene = Scene(self)

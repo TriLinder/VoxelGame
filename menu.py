@@ -1,6 +1,8 @@
 import pygame as pg
 import pygame_menu as pgm
 
+import math
+
 class Menu :
     def __init__(self, ui) -> None :
         self.ui = ui
@@ -12,7 +14,7 @@ class Menu :
         
         self.pgmTheme = self.ui.pgmTheme
 
-        self.screens = {"pause": PauseMenu(self, ui), "main": MainMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
+        self.screens = {"pause": PauseMenu(self, ui), "main": MainMenu(self, ui), "worldList": WorldListMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
         self.currentScreen = "main"
 
         self.resize()
@@ -102,13 +104,15 @@ class MainMenu :
         self.pgm.add.button("QUIT", self.quitButton)
 
     def playButton(self) :
-        self.ui.app.gamePaused = False
-        self.ui.app.inGame = True
-        self.menu.currentScreen = None
-        self.ui.redrawInTicks = 2
+        #self.ui.app.gamePaused = False
+        #self.ui.app.inGame = True
+        #self.menu.currentScreen = None
+        #self.ui.redrawInTicks = 2
 
-        self.ui.app.scene.newWorld()
-        self.ui.app.scene.reset()
+        #self.ui.app.scene.newWorld()
+        #self.ui.app.scene.reset()
+
+        self.menu.currentScreen = "worldList"
 
     def settingsButton(self) :
         self.menu.currentScreen = "settings"
@@ -125,7 +129,77 @@ class MainMenu :
     
     def draw(self) :
         self.pgm.draw(self.ui.surface)
+
+class WorldListMenu :
+    def __init__(self, menu, ui) -> None :
+        self.ui = ui
+        self.menu = menu
+        self.config = self.ui.app.config
+
+        self.pgmListTheme = menu.pgmTheme.copy()
+        self.pgmListTheme.title_bar_style = 1004
+
+        self.selectedButton = None
+        
+        self.reloadList()
     
+    def reloadList(self) :
+        self.pgmList = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.pgmListTheme, title='', position=(50, 50))
+        
+        self.saves = self.ui.app.saveMan.getSaves()
+
+        for world in self.saves :
+            worldFrame = self.pgmList.add.frame_v(border_color=(255, 255, 255), border_width=1, width=800, height=155)
+            
+            nameElement = self.pgmList.add.label(world.worldName, align=pgm.locals.ALIGN_LEFT)
+            lastPlayedElement = self.pgmList.add.label(world.getLastPlayed(), align=pgm.locals.ALIGN_LEFT)
+            
+            buttonFrame = self.pgmList.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=50, padding=(0,0,0,0))
+            
+            playButton = self.pgmList.add.button("PLAY", self.playButtonPress, align=pgm.locals.ALIGN_RIGHT, button_id=f"play_{world.worldId}", onselect=self.worldButtonSelect)
+            deleteButton = self.pgmList.add.button("DELETE", self.deleteButtonPress, align=pgm.locals.ALIGN_RIGHT, button_id=f"delete_{world.worldId}", onselect=self.worldButtonSelect)
+
+            buttonFrame._relax = True
+            buttonFrame.pack(playButton)
+            buttonFrame.pack(deleteButton)
+
+            worldFrame._relax = True
+            worldFrame.pack(nameElement)
+            worldFrame.pack(lastPlayedElement)
+            worldFrame.pack(buttonFrame)
+
+        self.resize()
+
+    def worldButtonSelect(self, selected, widget, menu) :
+        self.selectedButton = widget.get_id()
+
+    def playButtonPress(self) :
+        if not self.selectedButton :
+            return
+        
+        if self.selectedButton.startswith("play_") :
+            worldId = self.selectedButton[5:]
+
+    def deleteButtonPress(self) :
+        if not self.selectedButton :
+            return
+        
+        if self.selectedButton.startswith("delete_") :
+            worldId = self.selectedButton[7:]
+        
+            print(worldId)
+
+    def resize(self) :
+        width, height = self.ui.surface.get_size()
+        width, height = width, height*0.75
+        self.pgmList.resize(width, height, screen_dimension=(width, height))
+
+    def tick(self) :
+        self.pgmList.update(self.ui.app.pgEvents)
+    
+    def draw(self) :
+        self.pgmList.draw(self.ui.surface)
+
 class SettingsMenu :
     def __init__(self, menu, ui) -> None :
         self.ui = ui

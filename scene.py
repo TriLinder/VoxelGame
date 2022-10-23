@@ -18,9 +18,12 @@ class Scene :
 
         self.loadedChunks = {}
     
-    def newWorld(self, seed=None) :
+    def newWorld(self, seed=None, worldName=None) :
         self.worldId = uuid.uuid4().hex
-        self.worldName = f"world-{self.worldId}"
+
+        self.worldName = worldName
+        if not self.worldName :
+            self.worldName = f"world-{self.worldId}"
 
         if not seed :
             seed = random.randint(0, 10000000)
