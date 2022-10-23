@@ -231,6 +231,8 @@ class DebugScreen :
         playerPos = playerEntity.position
         playerPos = (round(playerPos[0], 2), round(playerPos[1], 2), round(playerPos[2], 2))
 
+        cameraRot = (round(playerEntity.camera.yaw, 2), round(playerEntity.camera.pitch, 2))
+
         memoryUsage = psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2
 
         self.lines.append(f"FPS: {round(self.ui.app.clock.get_fps())}")
@@ -238,6 +240,7 @@ class DebugScreen :
         self.lines.append("")
         self.lines.append(f"Pos: {playerPos}")
         self.lines.append(f"In chunk: {playerEntity.getChunk()}")
+        self.lines.append(f"Rotation: {cameraRot}")
         self.lines.append(f"Selected block: {playerEntity.selectedBlockId}")
         self.lines.append(f"Looking at: {lookingAt}")
         self.lines.append(f"On ground: {playerEntity.onGround}")
