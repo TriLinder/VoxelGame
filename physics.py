@@ -6,6 +6,7 @@ class EntityPhysics :
     def __init__(self, app, entity) -> None:
         self.app = app
         self.config = app.config
+        self.ui = app.ui
         self.entity = entity
 
         self.terminalVelocity = 2
@@ -58,26 +59,26 @@ class EntityPhysics :
 
         velocity = (self.velX, self.velY, self.velZ)
 
-        if keys[self.config.keybinds["forward"]] and self.entity.onGround :
+        if self.ui.isPressed("forward") and self.entity.onGround :
             velocity = nonYForward * speed
-        if keys[self.config.keybinds["left"]] and self.entity.onGround :
+        if self.ui.isPressed("left") and self.entity.onGround :
             velocity = self.left * speed
-        if keys[self.config.keybinds["backwards"]] and self.entity.onGround :
+        if self.ui.isPressed("backwards") and self.entity.onGround :
             velocity = nonYBackwards * speed
-        if keys[self.config.keybinds["right"]] and self.entity.onGround :
+        if self.ui.isPressed("right") and self.entity.onGround :
             velocity = self.right * speed
 
         self.velX, self.velY, self.velZ = velocity
 
-        if keys[self.config.keybinds["jump"]] and self.entity.onGround :
+        if self.ui.isPressed("jump") and self.entity.onGround :
             if not self.inFluid :
                 self.jump()
             else :
                 self.disableGravity = True
                 self.swimUp()
 
-        self.app.ctx.wireframe = keys[self.config.keybinds["wireframe"]] #Show wireframe when held down
-        self.app.ui.showDebugElements = keys[self.config.keybinds["debugInfo"]] #Show debug UI elements when held down
+        self.app.ctx.wireframe = self.ui.isPressed("wireframe") #Show wireframe when held down
+        self.app.ui.showDebugElements = self.ui.isPressed("debugInfo") #Show debug UI elements when held down
 
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 

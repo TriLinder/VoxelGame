@@ -52,8 +52,6 @@ class MainMenu :
         self.ui.app.gamePaused = False
         self.ui.app.inGame = True
         self.ui.showDebugElements = False
-
-        self.ui.app.camera.updateProjM()
     
     def settingsButton(self) :
         self.menu.currentScreen = "settings"
@@ -107,6 +105,7 @@ class SettingsMenu :
 
     def goBackButton(self) :
         self.menu.currentScreen = "main"
+        self.ui.app.camera.updateProjM() #Update camera FOV
         self.config.writeToFile()
     
     def resize(self) :
@@ -127,11 +126,13 @@ class Keybinds :
 
         self.keybinds = [{"label": "Forward", "id": "forward"}, {"label": "Left", "id": "left"},
                         {"label": "Backwards", "id": "backwards"}, {"label": "Right", "id": "right"},
-                        {"label": "Jump", "id": "jump"}, {"label": "Wireframe", "id": "wireframe"}, 
-                        {"label": "Debug info", "id": "debugInfo"}]
+                        {"label": "Jump", "id": "jump"}, {"label": "Break block", "id": "blockBreak"},
+                        {"label": "Place block", "id": "blockPlace"}, {"label": "Pick block", "id": "blockPick"},
+                        {"label": "Wireframe", "id": "wireframe"}, {"label": "Debug info", "id": "debugInfo"}]
 
         self.selectedButton = None
         self.waitingForInput = None
+        self.buttonCooldowns = {}
 
         self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], columns=2, rows=len(self.keybinds)+2, theme=menu.pgmTheme, title='Keybinds')
 
@@ -144,15 +145,21 @@ class Keybinds :
         for button in self.keybinds : #Buttons
             name = self.keycodeToName(self.config.keybinds[button["id"]])
             self.pgm.add.button(name, self.keybindButtonPress, button_id=button["id"], onselect=self.keybindButtonSelect)
+            self.buttonCooldowns[button["id"]] = -1
 
         self.pgm.add.label("")
         self.pgm.add.label("")
     
     def keycodeToName(self, keycode) :
-        if not keycode :
+        if keycode == None :
             return "NONE"
-        
-        name = pg.key.name(keycode)
+
+        custom = {0: "Left MB", 1: "Middle MB", 2: "Right MB", 3: "MB4", 4: "MB5", 5:"MB6"}
+
+        if keycode in custom :
+            return custom[keycode]
+
+        name = pg.key.name(keycode - 5) #First five indexes are the mouse buttons
 
         if not name :
             return "???"
@@ -165,8 +172,16 @@ class Keybinds :
     def keybindButtonPress(self) :
         widget = self.selectedButton
         
+        if not widget : #No button selected
+            return
+        
+        buttonId = widget.get_id()
+
+        if self.buttonCooldowns[buttonId] > self.ui.app.time : #Button on cooldown 
+            return
+
         if self.waitingForInput : #Set previously selected button's text back
-            name = self.keycodeToName(self.config.keybinds[self.waitingForInput.get_id()])
+            name = self.keycodeToName(self.config.keybinds[buttonId])
             self.waitingForInput.set_title(name)
         
         self.waitingForInput = widget
@@ -176,7 +191,8 @@ class Keybinds :
         self.menu.currentScreen = "settings"
 
     def checkForInput(self) :
-        keys = pg.key.get_pressed()
+        keys = self.ui.getPressed()
+
         if True in keys : #If any key is pressed
             for keyCode in range(len(keys)) :
                 if keys[keyCode] :
@@ -185,12 +201,12 @@ class Keybinds :
 
                     self.config.keybinds[buttonId] = keyCode
 
-                    print(keys[keyCode])
-
                     name = self.keycodeToName(keyCode)
                     widget.set_title(name)
 
                     self.waitingForInput = None
+                    
+                    self.buttonCooldowns[buttonId] = self.ui.app.time + 0.25 #Prevent from cliking on the keybind button again on accident
 
     def resize(self) :
         width, height = self.ui.surface.get_size()

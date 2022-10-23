@@ -60,6 +60,29 @@ class UserInterface :
         self.elements.append( PauseMenu(self) )
 
         self.elements.append( Menu(self) )
+    
+    def getPressed(self) : #Slow, but only used on the keybinds settings screen
+        pressedKeysSequence = pg.key.get_pressed()
+        pressedMBsSequence = pg.mouse.get_pressed(num_buttons=5)
+
+        pressed = []
+
+        for i in range(len(pressedMBsSequence)) : #Done this way because of pygame sequence weirdness
+            pressed.append(pressedMBsSequence[i])
+
+        for i in range(len(pressedKeysSequence)) :
+            pressed.append(pressedKeysSequence[i])
+
+        return pressed
+
+    def isPressed(self, buttonId) :
+        keyCode = self.app.config.keybinds[buttonId]
+
+        if keyCode in range(0, 5) :
+            return pg.mouse.get_pressed()[keyCode]
+        else :
+            keyCode -= 5
+            return pg.key.get_pressed()[keyCode]
 
     def resize(self) :
         self.res = self.app.windowSize

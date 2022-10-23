@@ -8,6 +8,7 @@ from physics import EntityPhysics
 class Player :
     def __init__(self, app) -> None:
         self.app = app
+        self.ui = app.ui
         self.camera = app.camera
         self.scene = app.scene
         self.physics = EntityPhysics(app, self)
@@ -62,7 +63,7 @@ class Player :
     def blockBreaking(self) :
         self.losBlock(self.reach)
 
-        if pg.mouse.get_pressed()[0] : #LMB Pressed, break block
+        if self.ui.isPressed("blockBreak") : #Break block
             if self.lookingAt and time.time() - self.lastPunchTimestamp > 0.25 :
                 self.lastPunchTimestamp = time.time()
 
@@ -71,7 +72,7 @@ class Player :
                 chunk = block.chunk
                 chunk.cullNeighbors(block.chunkRelativePos)
                 chunk.updateNeighborFluids(block.chunkRelativePos)
-        elif pg.mouse.get_pressed()[2] : #RMB Pressed, place block
+        elif self.ui.isPressed("blockPlace") : #Place block
             if self.selectedBlockId and self.lookingAtEmptyBlock and time.time() - self.lastPunchTimestamp > 0.25 :
                 self.lastPunchTimestamp = time.time()
 
@@ -79,7 +80,7 @@ class Player :
                 block.changeId(self.selectedBlockId)
                 chunk = block.chunk
                 chunk.cullNeighbors(block.chunkRelativePos)
-        elif pg.mouse.get_pressed()[1] : #Middle mouse button pressed, pick block
+        elif self.ui.isPressed("blockPick") : #Pick block
             if self.lookingAt :
                 block = self.lookingAt
 

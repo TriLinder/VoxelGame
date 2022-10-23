@@ -1,7 +1,9 @@
+import pygame as pg
 import json
 import os
 
-defaultConfig = {"renderDistance": 1, "fpsLimit": 60, "keybinds": {"forward": 119, "backwards": 115, "left": 97, "right": 100, "jump": 32, "wireframe": 103, "debugInfo": 104},
+defaultConfig = {"renderDistance": 1, "fpsLimit": 60, "keybinds": {"forward": pg.K_w + 5, "backwards": pg.K_s + 5, "left": pg.K_a + 5, "right": pg.K_d + 5,
+                "jump": pg.K_SPACE + 5, "blockPlace": 2, "blockPick": 1, "blockBreak": 0, "wireframe": pg.K_g + 5, "debugInfo": pg.K_h + 5},
                 "mouseSensitivity": 10, "fov": 70}
 
 class Config :
