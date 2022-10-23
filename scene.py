@@ -59,8 +59,15 @@ class Scene :
             return None
     
     def destroy(self) :
+        toDestroy = []
+
         for chunk in self.loadedChunks.values() :
             chunk.unload()
+
+            toDestroy.append((chunk.chunkX, chunk.chunkZ)) #Prevent dictionary size changing during iteration
+        
+        for chunkCoords in toDestroy :
+            del self.loadedChunks[chunkCoords]
 
     def render(self) :
         if self.app.inGame :

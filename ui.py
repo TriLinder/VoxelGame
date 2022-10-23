@@ -1,4 +1,5 @@
 import pygame as pg
+import pygame_menu as pgm
 import moderngl as mgl
 from array import array
 from moderngl_window import geometry, activate_context
@@ -16,19 +17,23 @@ class UserInterface :
         self.ctx = app.ctx
         
         self.elements = []
-        self.showDebugElements = True
+        self.showDebugElements = False
         self.debugElementsLastFrame = False
 
         self.redrawNextFrame = True
+        self.redrawInTicks = 2
 
         self.defaultFontName = pg.font.get_default_font()
 
         self.resize()
 
+        self.pgmTheme = pgm.themes.THEME_DARK
+        self.pgmTheme.set_background_color_opacity(0)
+
         activate_context(ctx=self.ctx)
         self.quadFs = geometry.quad_fs()
 
-        self.textureProgram = self.app.shaderMan.getShaderProgram("ui", "ui")
+        self.textureProgram = self.app.shaderMan.getShaderProgram("ui")
         self.textureProgram['surface'] = 0
 
         buffer = self.ctx.buffer(
@@ -57,8 +62,6 @@ class UserInterface :
 
         self.elements.append( Crosshair(self) )
         self.elements.append( DebugScreen(self) )
-        self.elements.append( PauseMenu(self) )
-
         self.elements.append( Menu(self) )
     
     def getPressed(self) : #Slow, but only used on the keybinds settings screen
@@ -99,6 +102,12 @@ class UserInterface :
     def tick(self) :
         pg.event.set_grab(not self.app.gamePaused)
         pg.mouse.set_visible(self.app.gamePaused)
+
+        if self.redrawInTicks > 0 :
+            self.redrawInTicks -= 1
+
+            if self.redrawInTicks == 0 :
+                self.redrawNextFrame = True
 
         for element in self.elements :
             element.tick()
@@ -242,34 +251,3 @@ class DebugScreen :
             if not line == "" :
                 self.ui.drawText((self.fontSize / 3, y), self.font, line, antialias=False)
             y += self.fontSize
-
-# -- PAUSE MENU -- #
-
-class PauseMenu :
-    def __init__(self, ui) -> None :
-        self.ui = ui
-        
-        self.visible = False
-        self.showInMenu = False
-        self.isDebugElement = False
-        
-        self.resize()
-    
-    def tick(self) :
-        self.visible = self.ui.app.gamePaused
-
-        if self.visible :
-            self.ui.redrawNextFrame = True
-    
-    def resize(self) :
-        self.fontSize = 80
-        self.font = pg.font.SysFont(self.ui.defaultFontName, self.fontSize, bold=True)
-
-    def render(self) :
-        centerX = math.floor(self.ui.res[0] / 2)
-        centerY = math.floor(self.ui.res[1] / 2)
-        
-        overlayColor = (0, 0, 0, 100) #RGBA
-        pg.draw.rect(self.ui.surface, overlayColor, [0, 0, self.ui.res[0], self.ui.res[1]]) #Overlay
-
-        self.ui.drawText((centerX, centerY), self.font, "GAME PAUSED", center=True)

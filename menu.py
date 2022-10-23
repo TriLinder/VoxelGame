@@ -1,41 +1,94 @@
-from turtle import width
 import pygame as pg
 import pygame_menu as pgm
-import math
 
 class Menu :
     def __init__(self, ui) -> None :
         self.ui = ui
+        self.config = ui.app.config
         
         self.visible = True
         self.showInMenu = True
         self.isDebugElement = False
         
-        self.pgmTheme = pgm.themes.THEME_DARK
+        self.pgmTheme = self.ui.pgmTheme
 
-        self.screens = {"main": MainMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
+        self.screens = {"pause": PauseMenu(self, ui), "main": MainMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
         self.currentScreen = "main"
 
         self.resize()
 
     def tick(self) :
-        self.visible = not self.ui.app.inGame
+        if (not self.visible) and self.ui.app.gamePaused and self.ui.app.inGame :
+            self.currentScreen = "pause"
+        
+        if self.visible and self.ui.app.inGame and (not self.ui.app.gamePaused) :
+            if self.currentScreen == "settings" :
+                self.screens["settings"].goBackButton()
+            
+            self.currentScreen = None
 
+        self.visible = bool(self.currentScreen)
         if self.visible :
             self.ui.redrawNextFrame = True
+
+            if self.currentScreen :
+                self.screens[self.currentScreen].tick()
     
     def resize(self) :
         for screen in self.screens.values() :
             screen.resize()
     
     def render(self) :
-        overlayColor = (0, 0, 0, 255) #RGBA
+        if not self.ui.app.inGame :
+            overlayColor = (42, 42, 42, 255) #RGBA
+        else :
+            overlayColor = (0, 0, 0, 150) #RGBA
+
         pg.draw.rect(self.ui.surface, overlayColor, [0, 0, self.ui.res[0], self.ui.res[1]]) #Overlay
 
-        self.screens[self.currentScreen].tick()
-        self.screens[self.currentScreen].draw()
+        if self.currentScreen :
+            self.screens[self.currentScreen].draw()
 
 # ------------------ #
+
+class PauseMenu :
+    def __init__(self, menu, ui) -> None :
+        self.ui = ui
+        self.menu = menu
+        
+        self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.ui.pgmTheme, title='Paused')
+
+        self.pgm.add.button("CONTINUE PLAYING", self.resumeButton)
+        self.pgm.add.button("SETTINGS", self.settingsButton)
+        self.pgm.add.button("MAIN MENU", self.mainMenuButton)
+
+        self.resize()
+    
+    def resumeButton(self) :
+        self.ui.app.gamePaused = False
+        self.ui.redrawInTicks = 2
+
+    def settingsButton(self) :
+        self.menu.currentScreen = "settings"
+    
+    def mainMenuButton(self) :
+        self.ui.app.inGame = False
+        self.ui.app.gamePaused = True
+        self.ui.app.scene.destroy()
+        
+        self.ui.redrawInTicks = 2
+
+        self.menu.currentScreen = "main"
+
+    def tick(self) :
+        self.pgm.update(self.ui.app.pgEvents)
+    
+    def resize(self) :
+        width, height = self.ui.surface.get_size()
+        self.pgm.resize(width, height, screen_dimension=(width, height))
+
+    def draw(self) :
+        self.pgm.draw(self.ui.surface)
 
 class MainMenu :
     def __init__(self, menu, ui) -> None :
@@ -51,7 +104,8 @@ class MainMenu :
     def playButton(self) :
         self.ui.app.gamePaused = False
         self.ui.app.inGame = True
-        self.ui.showDebugElements = False
+        self.menu.currentScreen = None
+        self.ui.redrawInTicks = 2
     
     def settingsButton(self) :
         self.menu.currentScreen = "settings"
@@ -78,9 +132,9 @@ class SettingsMenu :
         self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Settings')
         
         self.pgm.add.range_slider("Render distance:", default=self.config.renderDistance, range_values=(1, 8), increment=1, onchange=self.renderDistanceSlider, value_format=lambda x: str(round(x)))
-        self.pgm.add.range_slider("Mouse sensitivity:", default=self.config.mouseSensitivity, range_values=(1, 100), increment=1, onchange=self.mouseSensitivitySlider, value_format=lambda x: str(round(x)))
-        self.pgm.add.range_slider("FPS Limit:", default=self.config.fpsLimit, range_values=(15, 120), increment=1, onchange=self.fpsLimitSlider, value_format=lambda x: str(round(x)))
-        self.pgm.add.range_slider("FOV:", default=self.config.fov, range_values=(15, 120), increment=1, onchange=self.fovSlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("Mouse sensitivity:", default=self.config.mouseSensitivity, range_values=(1, 100), increment=5, onchange=self.mouseSensitivitySlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("FPS Limit:", default=self.config.fpsLimit, range_values=(15, 120), increment=5, onchange=self.fpsLimitSlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("FOV:", default=self.config.fov, range_values=(15, 120), increment=10, onchange=self.fovSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.button("KEYBINDS", self.keybindsButton)
         self.pgm.add.button("GO BACK", self.goBackButton)
 
@@ -100,13 +154,19 @@ class SettingsMenu :
         value = round(value)
         self.config.fov = value
 
+        self.ui.app.camera.updateProjM() #Update camera FOV
+        self.ui.app.shaderMan.updateCamera()
+
     def keybindsButton(self) :
         self.menu.currentScreen = "keybinds"
 
     def goBackButton(self) :
-        self.menu.currentScreen = "main"
-        self.ui.app.camera.updateProjM() #Update camera FOV
         self.config.writeToFile()
+
+        if not self.ui.app.inGame :
+            self.menu.currentScreen = "main"
+        else :
+            self.menu.currentScreen = "pause"
     
     def resize(self) :
         width, height = self.ui.surface.get_size()

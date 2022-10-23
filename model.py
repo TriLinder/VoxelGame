@@ -61,14 +61,6 @@ class Face :
         self.onInit()
     
     def onInit(self) :
-        #Texture
-        texture = self.textureMan.getTexture(self.textureID)
-        self.shaderProgram['u_texture_0'] = texture.glo
-        texture.use(location=texture.glo)
-    
-        #Matrixes
-        self.shaderProgram['m_proj'].write(self.app.camera.projM)
-        self.shaderProgram['m_view'].write(self.app.camera.viewM)
         self.shaderProgram['m_model'].write(self.modelM)
     
     def update(self) :
