@@ -34,10 +34,16 @@ class Player :
         j = {}
 
         j["position"] = tuple(self.position)
-        j["rotation"] = (self.pitch, self.yaw)
+        j["rotation"] = (round(self.yaw, 2), round(self.pitch, 2))
         j["selectedBlockId"] = self.selectedBlockId
 
         return j
+    
+    def loadFromDict(self, j) :
+        pos = j["position"]
+        self.position = glm.vec3(pos[0], pos[1], pos[2])
+        self.camera.yaw, self.camera.pitch = j["rotation"]
+        self.selectedBlockId = j["selectedBlockId"]
 
     def getChunk(self) :
         x, y, z = self.position

@@ -18,8 +18,10 @@ class Scene :
 
         self.loadedChunks = {}
     
-    def newWorld(self, seed=None, worldName=None) :
-        self.worldId = uuid.uuid4().hex
+    def newWorld(self, seed=None, worldName=None, worldId=None) :
+        self.worldId = worldId
+        if not self.worldId :
+            self.worldId = uuid.uuid4().hex
 
         self.worldName = worldName
         if not self.worldName :
@@ -43,15 +45,30 @@ class Scene :
         j["worldName"] = self.worldName
 
         return j
+    
+    def loadFromDict(self, j) :
+        self.newWorld(worldId=j["worldId"], worldName=j["worldName"], seed=j["seed"])
+        self.app.player.loadFromDict(j["player"])
 
     def saveToFile(self) :
-        directory = os.path.join("saves", self.worldName)
+        directory = os.path.join("saves", self.worldId)
         os.makedirs(directory, exist_ok=True)
 
         file = os.path.join(directory, "info.json")
 
         with open(file, "w") as f :
             f.write(json.dumps(self.saveToDict()))
+    
+    def loadFromFile(self, worldId) :
+        infoFile = os.path.join("saves", worldId, "info.json")
+
+        if not os.path.isfile(infoFile) :
+            return
+
+        with open(infoFile, "r") as f :
+            j = json.loads(f.read())
+        
+        self.loadFromDict(j)
     
     def loadNearChunks(self) :
         chunksToLoad = []

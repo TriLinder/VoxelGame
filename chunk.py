@@ -240,7 +240,7 @@ class Chunk :
 
         j = self.chunkToDict()
 
-        directory = os.path.join("saves", self.app.scene.worldName, "chunks")
+        directory = os.path.join("saves", self.app.scene.worldId, "chunks")
         path = os.path.join(directory, f"{self.chunkX}_{self.chunkZ}.json")
 
         os.makedirs(directory, exist_ok=True)
@@ -262,7 +262,7 @@ class Chunk :
                     self.blocks[x][y][z].changeId(blockId)
 
     def loadChunk(self) :
-        directory = os.path.join("saves", self.app.scene.worldName, "chunks")
+        directory = os.path.join("saves", self.app.scene.worldId, "chunks")
         path = os.path.join(directory, f"{self.chunkX}_{self.chunkZ}.json")
 
         if not os.path.isfile(path) :

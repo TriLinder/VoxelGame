@@ -1,7 +1,7 @@
 import json
 import os
 import time
-import datetime
+import shutil
 
 class SaveManager :
     def __init__(self, app) -> None :
@@ -30,6 +30,14 @@ class SaveManager :
         saves.sort(key=lambda save: save.lastPlayed)
 
         return saves
+
+    def deleteSave(self, worldId) :
+        directory = os.path.join("saves", worldId)
+
+        if not os.path.isdir(directory) :
+            return
+        
+        shutil.rmtree(directory)
 
 class Save :
     def __init__(self, worldName=None, worldId=None, seed=None, lastPlayed=None, playerInfo=None) -> None :

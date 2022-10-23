@@ -39,6 +39,7 @@ class Camera :
         
         if self.freeCam :
             self.move()
+
         self.rotate()
         self.updateCameraVectors()
         self.viewM = self.get_view_matrix()
@@ -64,8 +65,9 @@ class Camera :
         mouseSensitivity = self.config.mouseSensitivity / 100
 
         self.yaw += relX * mouseSensitivity
-        self.pitch += (relY * mouseSensitivity) * -1
+        self.yaw %= 360
 
+        self.pitch += (relY * mouseSensitivity) * -1
         self.pitch = max(-89, min(89, self.pitch))
 
     def move(self) :

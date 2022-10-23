@@ -104,14 +104,6 @@ class MainMenu :
         self.pgm.add.button("QUIT", self.quitButton)
 
     def playButton(self) :
-        #self.ui.app.gamePaused = False
-        #self.ui.app.inGame = True
-        #self.menu.currentScreen = None
-        #self.ui.redrawInTicks = 2
-
-        #self.ui.app.scene.newWorld()
-        #self.ui.app.scene.reset()
-
         self.menu.currentScreen = "worldList"
 
     def settingsButton(self) :
@@ -134,6 +126,7 @@ class WorldListMenu :
     def __init__(self, menu, ui) -> None :
         self.ui = ui
         self.menu = menu
+        self.saveMan = ui.app.saveMan
         self.config = self.ui.app.config
 
         self.pgmListTheme = menu.pgmTheme.copy()
@@ -146,13 +139,13 @@ class WorldListMenu :
     def reloadList(self) :
         self.pgmList = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.pgmListTheme, title='', position=(50, 50))
         
-        self.saves = self.ui.app.saveMan.getSaves()
+        self.saves = self.saveMan.getSaves()
 
         for world in self.saves :
             worldFrame = self.pgmList.add.frame_v(border_color=(255, 255, 255), border_width=1, width=800, height=155)
             
             nameElement = self.pgmList.add.label(world.worldName, align=pgm.locals.ALIGN_LEFT)
-            lastPlayedElement = self.pgmList.add.label(world.getLastPlayed(), align=pgm.locals.ALIGN_LEFT)
+            lastPlayedElement = self.pgmList.add.label(f"Last played: {world.getLastPlayed()}", align=pgm.locals.ALIGN_LEFT)
             
             buttonFrame = self.pgmList.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=50, padding=(0,0,0,0))
             
@@ -180,6 +173,13 @@ class WorldListMenu :
         if self.selectedButton.startswith("play_") :
             worldId = self.selectedButton[5:]
 
+            self.ui.app.scene.loadFromFile(worldId)
+
+            self.ui.app.gamePaused = False
+            self.ui.app.inGame = True
+            self.menu.currentScreen = None
+            self.ui.redrawInTicks = 2
+
     def deleteButtonPress(self) :
         if not self.selectedButton :
             return
@@ -187,7 +187,8 @@ class WorldListMenu :
         if self.selectedButton.startswith("delete_") :
             worldId = self.selectedButton[7:]
         
-            print(worldId)
+            self.saveMan.deleteSave(worldId)
+            self.reloadList()
 
     def resize(self) :
         width, height = self.ui.surface.get_size()
