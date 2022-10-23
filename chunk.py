@@ -9,7 +9,7 @@ chunkSize = 16
 
 waterLevel = 4
 
-noSave = True
+noSave = False
 
 class Chunk :
     def __init__(self, app, chunkCoords=(0,0)) -> None:

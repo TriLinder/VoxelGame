@@ -106,7 +106,10 @@ class MainMenu :
         self.ui.app.inGame = True
         self.menu.currentScreen = None
         self.ui.redrawInTicks = 2
-    
+
+        self.ui.app.scene.newWorld()
+        self.ui.app.scene.reset()
+
     def settingsButton(self) :
         self.menu.currentScreen = "settings"
     

@@ -111,6 +111,7 @@ class GraphicsEngine :
             self.check_events()
             self.player.tick()
             self.camera.update()
+            self.scene.tick()
             self.ui.tick()
             self.render()
             self.deltaTime = self.clock.tick(self.config.fpsLimit)

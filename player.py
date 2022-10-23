@@ -1,7 +1,5 @@
 import glm
-import math
 import pygame as pg
-import time
 
 from physics import EntityPhysics
 
@@ -11,12 +9,18 @@ class Player :
         self.ui = app.ui
         self.camera = app.camera
         self.scene = app.scene
-        self.physics = EntityPhysics(app, self)
+        
+        self.reset()
 
+        self.cameraHeight = 2
+        self.reach = 8
+    
+    def reset(self) :
+        self.physics = EntityPhysics(self.app, self)
         self.physics.controlMovement = True
         self.onGround = True
 
-        self.position = (2, 30, 3)
+        self.position = (5, 15, 5)
         self.yaw = 0
         self.pitch = 0
 
@@ -25,9 +29,15 @@ class Player :
         self.lastPunchTimestamp = -1
 
         self.selectedBlockId = None
+    
+    def saveToDict(self) :
+        j = {}
 
-        self.cameraHeight = 2
-        self.reach = 8
+        j["position"] = tuple(self.position)
+        j["rotation"] = (self.pitch, self.yaw)
+        j["selectedBlockId"] = self.selectedBlockId
+
+        return j
 
     def getChunk(self) :
         x, y, z = self.position
@@ -64,8 +74,8 @@ class Player :
         self.losBlock(self.reach)
 
         if self.ui.isPressed("blockBreak") : #Break block
-            if self.lookingAt and time.time() - self.lastPunchTimestamp > 0.25 :
-                self.lastPunchTimestamp = time.time()
+            if self.lookingAt and self.app.time - self.lastPunchTimestamp > 0.25 :
+                self.lastPunchTimestamp = self.app.time
 
                 block = self.lookingAt
                 block.changeId("air")
@@ -73,8 +83,8 @@ class Player :
                 chunk.cullNeighbors(block.chunkRelativePos)
                 chunk.updateNeighborFluids(block.chunkRelativePos)
         elif self.ui.isPressed("blockPlace") : #Place block
-            if self.selectedBlockId and self.lookingAtEmptyBlock and time.time() - self.lastPunchTimestamp > 0.25 :
-                self.lastPunchTimestamp = time.time()
+            if self.selectedBlockId and self.lookingAtEmptyBlock and self.app.time - self.lastPunchTimestamp > 0.25 :
+                self.lastPunchTimestamp = self.app.time
 
                 block = self.lookingAtEmptyBlock
                 block.changeId(self.selectedBlockId)

@@ -1,4 +1,9 @@
 import math
+import uuid
+import time
+import random
+import json
+import os
 
 from chunk import Chunk
 from worldGen import WorldGen
@@ -9,11 +14,41 @@ class Scene :
         self.config = app.config
         self.camera = self.app.camera
 
-        self.worldName = "world0"
-
-        self.worldGen = WorldGen()
+        self.newWorld()
 
         self.loadedChunks = {}
+    
+    def newWorld(self, seed=None) :
+        self.worldId = uuid.uuid4().hex
+        self.worldName = f"world-{self.worldId}"
+
+        if not seed :
+            seed = random.randint(0, 10000000)
+        
+        self.worldGen = WorldGen(seed)
+    
+    def reset(self) :
+        self.app.player.reset()
+    
+    def saveToDict(self) :
+        j = {}
+
+        j["lastPlayed"] = round(time.time())
+        j["player"] = self.app.player.saveToDict()
+        j["seed"] = self.worldGen.seed
+        j["worldId"] = self.worldId
+        j["worldName"] = self.worldName
+
+        return j
+
+    def saveToFile(self) :
+        directory = os.path.join("saves", self.worldName)
+        os.makedirs(directory, exist_ok=True)
+
+        file = os.path.join(directory, "info.json")
+
+        with open(file, "w") as f :
+            f.write(json.dumps(self.saveToDict()))
     
     def loadNearChunks(self) :
         chunksToLoad = []
@@ -69,9 +104,12 @@ class Scene :
         for chunkCoords in toDestroy :
             del self.loadedChunks[chunkCoords]
 
-    def render(self) :
+        self.saveToFile()
+
+    def tick(self) :
         if self.app.inGame :
             self.loadNearChunks()
 
+    def render(self) :
         for chunk in self.loadedChunks.values() :
             chunk.render()
