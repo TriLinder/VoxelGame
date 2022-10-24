@@ -30,6 +30,14 @@ class SaveManager :
         saves.sort(key=lambda save: save.lastPlayed, reverse=True)
 
         return saves
+    
+    def newWorld(self, name=None, seed=None) :
+        self.app.gamePaused = False
+        self.app.inGame = True
+        self.app.ui.redrawInTicks = 2
+
+        self.app.scene.newWorld(worldName=name, seed=seed)
+        self.app.scene.reset()
 
     def deleteSave(self, worldId) :
         directory = os.path.join("saves", worldId)

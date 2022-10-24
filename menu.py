@@ -15,7 +15,8 @@ class Menu :
         
         self.pgmTheme = self.ui.pgmTheme
 
-        self.screens = {"pause": PauseMenu(self, ui), "main": MainMenu(self, ui), "worldList": WorldListMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
+        self.screens = {"pause": PauseMenu(self, ui), "main": MainMenu(self, ui), "worldList": WorldListMenu(self, ui),
+                        "createWorld": CreateWorldMenu(self, ui), "settings": SettingsMenu(self, ui), "keybinds": Keybinds(self, ui)}
         self.currentScreen = "main"
 
         self.resize()
@@ -138,7 +139,7 @@ class WorldListMenu :
         
         self.outerButtonFrame = self.pgmOuter.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=200)
         goBackButton = self.pgmOuter.add.button("GO BACK", self.goBackButton)
-        newWorldButton = self.pgmOuter.add.button("NEW WORLD")
+        newWorldButton = self.pgmOuter.add.button("NEW WORLD", self.newWorldButton)
         self.outerButtonFrame._relax = True
         self.outerButtonFrame.set_float(True)
         self.outerButtonFrame.pack(goBackButton)
@@ -203,6 +204,9 @@ class WorldListMenu :
             self.saveMan.deleteSave(worldId)
             self.reloadList()
     
+    def newWorldButton(self) :
+        self.menu.currentScreen = "createWorld"
+
     def goBackButton(self) :
         self.menu.currentScreen = "main"
 
@@ -210,7 +214,7 @@ class WorldListMenu :
         width, height = self.ui.surface.get_size()
         self.pgmList.resize(width, height*0.75, screen_dimension=(width, height))
         self.pgmOuter.resize(width, height, screen_dimension=(width, height))
-        self.outerButtonFrame.translate(0, (self.ui.res[1] * 0.95) / 2)
+        self.outerButtonFrame.translate(0, (height * 0.95) / 2)
 
     def tick(self) :
         self.pgmList.update(self.ui.app.pgEvents)
@@ -219,6 +223,71 @@ class WorldListMenu :
     def draw(self) :
         self.pgmList.draw(self.ui.surface)
         self.pgmOuter.draw(self.ui.surface)
+
+class CreateWorldMenu :
+    def __init__(self, menu, ui) -> None :
+        self.ui = ui
+        self.menu = menu
+        self.saveMan = ui.app.saveMan
+        
+        self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Create a world')
+
+        self.nameInput = self.pgm.add.text_input("Name: ", maxchar=20)
+        self.seedInputPlaceholderReplaced = False
+        self.seedInput = self.pgm.add.text_input("Seed: ", default="RANDOM", onselect=self.seedInputSelect, maxchar=20)
+        
+        self.buttonFrame = self.pgm.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=200)
+        goBackButton = self.pgm.add.button("GO BACK", self.goBackButton)
+        createWorldButton = self.pgm.add.button("NEW WORLD", self.createWorldButton)
+        self.buttonFrame._relax = True
+        self.buttonFrame.set_float(True)
+        self.buttonFrame.pack(goBackButton)
+        self.buttonFrame.pack(createWorldButton)
+
+        self.reset()
+
+    def reset(self) :
+        self.nameInput.set_value("")
+        self.seedInput.set_value("RANDOM")
+        self.seedInputPlaceholderReplaced = False
+
+        self.resize()
+
+    def seedInputSelect(self, selected, widget, menu) :
+        if not self.seedInputPlaceholderReplaced and self.ui.app.time > 0.25 :
+            widget.set_value("")
+
+            self.seedInputPlaceholderReplaced = True
+
+    def createWorldButton(self) :
+        worldName = self.nameInput.get_value().strip()
+        seedString = self.seedInput.get_value().strip()
+
+        if not len(worldName) > 0 :
+            return
+
+        if len(seedString) == 0 or (not self.seedInputPlaceholderReplaced) :
+            seedString = None
+        
+        self.saveMan.newWorld(name=worldName, seed=seedString)
+        self.menu.currentScreen = None
+        self.reset()
+
+    def goBackButton(self) :
+        self.menu.currentScreen = "worldList"
+        self.reset();
+
+    def resize(self) :
+        width, height = self.ui.surface.get_size()
+        self.pgm.resize(width, height, screen_dimension=(width, height))
+
+        self.buttonFrame.translate(0, (height * 0.90) / 2)
+
+    def tick(self) :
+        self.pgm.update(self.ui.app.pgEvents)
+    
+    def draw(self) :
+        self.pgm.draw(self.ui.surface)
 
 class SettingsMenu :
     def __init__(self, menu, ui) -> None :

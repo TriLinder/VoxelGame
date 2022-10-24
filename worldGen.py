@@ -4,12 +4,19 @@ from perlin_noise import PerlinNoise
 
 class WorldGen :
     def __init__(self, seed=round(time.time())) -> None:
-        self.seed = seed
+        self.seed = self.stringToSeed(str(seed))
 
-        self.heightNoise = PerlinNoise(octaves=10, seed=seed)
+        self.heightNoise = PerlinNoise(octaves=10, seed=self.seed)
+
+    def stringToSeed(self, string) :
+        b = bytes(string, encoding="utf-8")
+        seed = int.from_bytes(b, "big")
+        seed = seed % (2**32) - 1
+
+        return seed 
 
     def seedFromCoords(self, x, z) :
-        return round(self.seed * (x+z) * x * z + (self.seed/2))
+        return self.stringToSeed(f"{x}_{z}")
 
     def getTerrainY(self, x, z, min, max) :
         n = self.heightNoise([x/100, z/100])

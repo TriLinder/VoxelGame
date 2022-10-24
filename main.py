@@ -82,7 +82,7 @@ class GraphicsEngine :
         self.pgEvents = pg.event.get()
 
         for e in self.pgEvents :
-            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_BACKSPACE) :
+            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_TAB) :
                 self.quit()
             if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame :
                 self.gamePaused = not self.gamePaused
