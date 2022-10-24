@@ -25,6 +25,7 @@ class UserInterface :
 
         self.defaultFontName = pg.font.get_default_font()
 
+        self.texture = None
         self.resize()
 
         self.pgmTheme = pgm.themes.THEME_DARK
@@ -91,6 +92,9 @@ class UserInterface :
         self.res = self.app.windowSize
 
         self.surface = pg.Surface(self.res, flags=pg.SRCALPHA)
+
+        if self.texture :
+            self.texture.release()
 
         self.texture = self.ctx.texture(self.res, 4)
         self.texture.filter = mgl.NEAREST, mgl.NEAREST
