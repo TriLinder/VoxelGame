@@ -1,3 +1,4 @@
+from matplotlib.pyplot import margins
 import pygame as pg
 import pygame_menu as pgm
 
@@ -74,13 +75,14 @@ class PauseMenu :
         self.menu.currentScreen = "settings"
     
     def mainMenuButton(self) :
+        self.ui.app.scene.destroy()
         self.ui.app.inGame = False
         self.ui.app.gamePaused = True
-        self.ui.app.scene.destroy()
         
         self.ui.redrawInTicks = 2
 
         self.menu.currentScreen = "main"
+        self.menu.screens["worldList"].reloadList()
 
     def tick(self) :
         self.pgm.update(self.ui.app.pgEvents)
@@ -132,9 +134,20 @@ class WorldListMenu :
         self.pgmListTheme = menu.pgmTheme.copy()
         self.pgmListTheme.title_bar_style = 1004
 
+        self.pgmOuter = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Load a world')
+        
+        self.outerButtonFrame = self.pgmOuter.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=200)
+        goBackButton = self.pgmOuter.add.button("GO BACK", self.goBackButton)
+        newWorldButton = self.pgmOuter.add.button("NEW WORLD")
+        self.outerButtonFrame._relax = True
+        self.outerButtonFrame.set_float(True)
+        self.outerButtonFrame.pack(goBackButton)
+        self.outerButtonFrame.pack(newWorldButton)
+
         self.selectedButton = None
         
         self.reloadList()
+        self.resize()
     
     def reloadList(self) :
         self.pgmList = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.pgmListTheme, title='', position=(50, 50))
@@ -189,17 +202,23 @@ class WorldListMenu :
         
             self.saveMan.deleteSave(worldId)
             self.reloadList()
+    
+    def goBackButton(self) :
+        self.menu.currentScreen = "main"
 
     def resize(self) :
         width, height = self.ui.surface.get_size()
-        width, height = width, height*0.75
-        self.pgmList.resize(width, height, screen_dimension=(width, height))
+        self.pgmList.resize(width, height*0.75, screen_dimension=(width, height))
+        self.pgmOuter.resize(width, height, screen_dimension=(width, height))
+        self.outerButtonFrame.translate(0, (self.ui.res[1] * 0.95) / 2)
 
     def tick(self) :
         self.pgmList.update(self.ui.app.pgEvents)
-    
+        self.pgmOuter.update(self.ui.app.pgEvents)
+
     def draw(self) :
         self.pgmList.draw(self.ui.surface)
+        self.pgmOuter.draw(self.ui.surface)
 
 class SettingsMenu :
     def __init__(self, menu, ui) -> None :

@@ -118,7 +118,8 @@ class Chunk :
         self.generateWater()
 
     def unload(self) :
-        self.saveChunk()
+        if self.app.inGame :
+            self.saveChunk()
         
         for x in range(chunkSize) :
             for y in range(heightLimit) :

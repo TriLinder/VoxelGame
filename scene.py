@@ -124,7 +124,8 @@ class Scene :
         for chunkCoords in toDestroy :
             del self.loadedChunks[chunkCoords]
 
-        self.saveToFile()
+        if self.app.inGame :
+            self.saveToFile()
 
     def tick(self) :
         if self.app.inGame :

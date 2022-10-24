@@ -27,7 +27,7 @@ class SaveManager :
             save = Save(worldName=info["worldName"], worldId=info["worldId"], seed=info["seed"], lastPlayed=info["lastPlayed"], playerInfo=info["player"])
             saves.append(save)
         
-        saves.sort(key=lambda save: save.lastPlayed)
+        saves.sort(key=lambda save: save.lastPlayed, reverse=True)
 
         return saves
 
