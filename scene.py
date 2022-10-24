@@ -1,7 +1,6 @@
 import math
 import uuid
 import time
-import random
 import json
 import os
 
@@ -28,7 +27,7 @@ class Scene :
             self.worldName = f"world-{self.worldId}"
 
         if not seed :
-            seed = random.randint(0, 10000000)
+            seed = self.worldId
         
         self.worldGen = WorldGen(seed)
     

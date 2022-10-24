@@ -72,6 +72,9 @@ class GraphicsEngine :
         #Player
         self.player = Player(self)
 
+        if self.config.fullscreen :
+            pg.display.toggle_fullscreen()
+
 
     def quit(self) :
         self.scene.destroy()
@@ -82,12 +85,17 @@ class GraphicsEngine :
         self.pgEvents = pg.event.get()
 
         for e in self.pgEvents :
-            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_TAB) :
+            if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_DELETE) : #Quit the application
                 self.quit()
-            if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame :
+            if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame : #Pause the game
                 self.gamePaused = not self.gamePaused
                 self.ui.redrawNextFrame = True
-            if e.type == pg.WINDOWSIZECHANGED :
+            if e.type == pg.KEYDOWN and e.key == pg.K_F11 : #Toggle fullscreen
+                pg.display.toggle_fullscreen()
+                self.ui.redrawInTicks = 2
+                self.config.fullscreen = not self.config.fullscreen
+                self.config.writeToFile()
+            if e.type == pg.WINDOWSIZECHANGED : #Resize camera and UI
                 self.windowSize = (e.x, e.y)
 
                 self.camera.aspectRatio = e.x / e.y

@@ -1,8 +1,5 @@
-from matplotlib.pyplot import margins
 import pygame as pg
 import pygame_menu as pgm
-
-import math
 
 class Menu :
     def __init__(self, ui) -> None :
@@ -36,7 +33,10 @@ class Menu :
             self.ui.redrawNextFrame = True
 
             if self.currentScreen :
-                self.screens[self.currentScreen].tick()
+                try :
+                    self.screens[self.currentScreen].tick()
+                except AssertionError : #pygame_menu weirdness while resizing the window
+                    pass
     
     def resize(self) :
         for screen in self.screens.values() :
@@ -297,12 +297,18 @@ class SettingsMenu :
 
         self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Settings')
         
+        self.fullscreenSwitchElement = self.pgm.add.toggle_switch("Fullscreen: ", default=self.config.fullscreen, state_text=("OFF", "ON"), onchange=self.fullscreenSwitchChange)
         self.pgm.add.range_slider("Render distance:", default=self.config.renderDistance, range_values=(1, 8), increment=1, onchange=self.renderDistanceSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("Mouse sensitivity:", default=self.config.mouseSensitivity, range_values=(1, 100), increment=5, onchange=self.mouseSensitivitySlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("FPS Limit:", default=self.config.fpsLimit, range_values=(15, 120), increment=5, onchange=self.fpsLimitSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("FOV:", default=self.config.fov, range_values=(15, 120), increment=10, onchange=self.fovSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.button("KEYBINDS", self.keybindsButton)
         self.pgm.add.button("GO BACK", self.goBackButton)
+
+    def fullscreenSwitchChange(self, value) :
+        self.config.fullscreen = value
+        self.ui.redrawInTicks = 2
+        pg.display.toggle_fullscreen()
 
     def renderDistanceSlider(self, value) :
         value = round(value)
@@ -340,6 +346,8 @@ class SettingsMenu :
 
     def tick(self) :
         self.pgm.update(self.ui.app.pgEvents)
+
+        self.fullscreenSwitchElement.set_value(self.config.fullscreen)
     
     def draw(self) :
         self.pgm.draw(self.ui.surface)
