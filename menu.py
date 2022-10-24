@@ -155,6 +155,10 @@ class WorldListMenu :
         
         self.saves = self.saveMan.getSaves()
 
+        if len(self.saves) == 0 :
+            self.pgmList.add.label("There currently aren't any worlds.")
+            self.pgmList.add.label("Try creating one.")
+
         for world in self.saves :
             worldFrame = self.pgmList.add.frame_v(border_color=(255, 255, 255), border_width=1, width=800, height=155)
             
