@@ -12,7 +12,7 @@ class Config :
 
         if not os.path.isfile("settings.json") :
             with open("settings.json", "w") as f :
-                f.write(json.dumps(defaultConfig))
+                f.write(json.dumps(defaultConfig, indent=4))
         
         self.loadConfig()
     
@@ -39,4 +39,4 @@ class Config :
         self.updateDict()
 
         with open("settings.json", "w") as f :
-            f.write(json.dumps(self.config))
+            f.write(json.dumps(self.config, indent=4))

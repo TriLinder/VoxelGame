@@ -56,7 +56,7 @@ class Scene :
         file = os.path.join(directory, "info.json")
 
         with open(file, "w") as f :
-            f.write(json.dumps(self.saveToDict()))
+            f.write(json.dumps(self.saveToDict(), indent=4))
     
     def loadFromFile(self, worldId) :
         infoFile = os.path.join("saves", worldId, "info.json")
