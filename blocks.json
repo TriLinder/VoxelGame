@@ -44,6 +44,6 @@
     "water": {
         "model": "cube",
         "faceTextures": ["water/all.png", "water/all.png", "water/all.png", "water/all.png", "water/all.png", "water/all.png"],
-        "flags": ["fluid", "nonPhysical", "fluid"]
+        "flags": ["fluid", "nonPhysical"]
     }
 }
