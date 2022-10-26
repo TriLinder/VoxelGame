@@ -154,14 +154,17 @@ class EntityPhysics :
 
         return self.entity.onGround
     
-    def inFluidCheck(self) :
-        x, y, z = self.entity.position
+    def isBlockFluid(self, pos) :
+        x, y, z = pos
 
         chunk = self.app.scene.chunkObjectFromBlockCoords(x, z)
         if chunk :
             block = chunk.getBlockFromAbsoulteCoords((x, y + 0.5, z))
             if block :
-                self.inFluid = block.isFluid
+                return block.isFluid
+    
+    def inFluidCheck(self) :
+        self.inFluid = self.isBlockFluid(self.entity.position)
 
     def safePositionCheck(self, pos) :
         x, y, z = pos

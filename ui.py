@@ -61,6 +61,7 @@ class UserInterface :
             ],
         )
 
+        self.elements.append( FluidOverlay(self) )
         self.elements.append( Crosshair(self) )
         self.elements.append( DebugScreen(self) )
         self.elements.append( Menu(self) )
@@ -261,3 +262,28 @@ class DebugScreen :
             if not line == "" :
                 self.ui.drawText((self.fontSize / 3, y), self.font, line, antialias=False)
             y += self.fontSize
+
+class FluidOverlay :
+    def __init__(self, ui) -> None :
+        self.ui = ui
+
+        self.visible = False
+        self.showInMenu = False
+        self.isDebugElement = False
+
+        self.resize()
+    
+    def resize(self) :
+        pass
+
+    def tick(self) :
+        self.visible = bool(self.ui.app.camera.inFluid)
+
+        if self.visible :
+            self.ui.redrawNextFrame = True
+            self.ui.redrawInTicks = 2
+
+    def render(self) :
+        overlayColor = (83, 173, 215, 150)
+
+        pg.draw.rect(self.ui.surface, overlayColor, [0, 0, self.ui.res[0], self.ui.res[1]]) #Overlay

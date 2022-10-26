@@ -17,6 +17,7 @@ class Camera :
         self.yaw = yaw
         self.pitch = pitch
 
+        self.inFluid = False
         self.freeCam = False
         
         self.up = glm.vec3(0, 1, 0)
@@ -32,6 +33,11 @@ class Camera :
         #Projection matrix
         self.updateProjM()
     
+    def inFluidCheck(self) :
+        physics = self.app.player.physics
+
+        self.inFluid = physics.isBlockFluid(self.position)
+
     def update(self) :
         if self.app.gamePaused :
             pg.mouse.get_rel() #Prevent camera from turning a lot after unpause
@@ -41,6 +47,7 @@ class Camera :
             self.move()
 
         self.rotate()
+        self.inFluidCheck()
         self.updateCameraVectors()
         self.viewM = self.get_view_matrix()
 

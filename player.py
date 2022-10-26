@@ -1,5 +1,4 @@
 import glm
-import pygame as pg
 
 from physics import EntityPhysics
 
@@ -20,7 +19,7 @@ class Player :
         self.physics.controlMovement = True
         self.onGround = True
 
-        self.position = (5, 15, 5)
+        self.position = glm.vec3(5, 15, 5)
         self.yaw = 0
         self.pitch = 0
 
@@ -76,7 +75,7 @@ class Player :
         self.lookingAtEmptyBlock = None
         return self.lookingAt
     
-    def blockBreaking(self) :
+    def blockInteract(self) :
         self.losBlock(self.reach)
 
         if self.ui.isPressed("blockBreak") : #Break block
@@ -96,6 +95,8 @@ class Player :
                 block.changeId(self.selectedBlockId)
                 chunk = block.chunk
                 chunk.cullNeighbors(block.chunkRelativePos)
+
+                chunk.updateNeighborFluids(block.chunkRelativePos)
         elif self.ui.isPressed("blockPick") : #Pick block
             if self.lookingAt :
                 block = self.lookingAt
@@ -118,4 +119,4 @@ class Player :
         if not self.camera.freeCam :
             self.camera.position = self.position + glm.vec3(0, self.cameraHeight, 0)
         
-        self.blockBreaking()
+        self.blockInteract()

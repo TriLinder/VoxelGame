@@ -221,8 +221,11 @@ class WorldListMenu :
         self.outerButtonFrame.translate(0, (height * 0.95) / 2)
 
     def tick(self) :
-        self.pgmList.update(self.ui.app.pgEvents)
-        self.pgmOuter.update(self.ui.app.pgEvents)
+        try :
+            self.pgmList.update(self.ui.app.pgEvents)
+            self.pgmOuter.update(self.ui.app.pgEvents)
+        except RecursionError : #Fix pygame_menu crash when pressing the up arrow
+            pass
 
     def draw(self) :
         self.pgmList.draw(self.ui.surface)
