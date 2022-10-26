@@ -156,7 +156,7 @@ class Chunk :
         self.cullBlock( (x+0, y+0, z+1) )
         self.cullBlock( (x+0, y+0, z-1) )
     
-    def attemptToSpreadFluid(self, pos, fluidBlockId) :
+    def attemptToSpreadFluid(self, pos, fluidBlockId, depth=9999) :
         x, y, z = pos
 
         try :
@@ -165,7 +165,7 @@ class Chunk :
             if "brokenByFluids" in block.flags :
                 block.changeId(fluidBlockId)
 
-                self.updateNeighborFluids(pos)
+                self.updateNeighborFluids(pos, depth=depth - 1)
                 self.cullNeighbors(pos)
         except IndexError :
             if (abs(x) >= chunkSize) or (abs(z) >= chunkSize) : #Attempt to spread fluid to neighbor chunk, if loaded
@@ -175,10 +175,10 @@ class Chunk :
                 if chunk :
                     block = chunk.getBlockFromAbsoulteCoords( (absoluteX, y, absoluteZ) )
                     if block :
-                        chunk.attemptToSpreadFluid(block.chunkRelativePos, fluidBlockId)
+                        chunk.attemptToSpreadFluid(block.chunkRelativePos, fluidBlockId, depth=depth - 1)
 
 
-    def updateFluid(self, pos) :
+    def updateFluid(self, pos, depth=9999) :
         x, y, z = pos
 
         try :
@@ -187,25 +187,28 @@ class Chunk :
             if not block.isFluid :
                 return
 
-            self.attemptToSpreadFluid( (x+1, y+0, z+0), block.id )
-            self.attemptToSpreadFluid( (x-1, y+0, z+0), block.id )
-            self.attemptToSpreadFluid( (x+0, y-1, z+0), block.id )
-            self.attemptToSpreadFluid( (x+0, y+0, z+1), block.id )
-            self.attemptToSpreadFluid( (x+0, y+0, z-1), block.id )
+            self.attemptToSpreadFluid( (x+1, y+0, z+0), block.id, depth=depth )
+            self.attemptToSpreadFluid( (x-1, y+0, z+0), block.id, depth=depth )
+            self.attemptToSpreadFluid( (x+0, y-1, z+0), block.id, depth=depth )
+            self.attemptToSpreadFluid( (x+0, y+0, z+1), block.id, depth=depth )
+            self.attemptToSpreadFluid( (x+0, y+0, z-1), block.id, depth=depth )
         except IndexError :
             pass
 
-    def updateNeighborFluids(self, pos) :
+    def updateNeighborFluids(self, pos, depth=50) :
         x, y, z = pos
 
-        self.updateFluid( (x, y, z) )
+        if depth == 0 :
+            return
 
-        self.updateFluid( (x+1, y+0, z+0) )
-        self.updateFluid( (x-1, y+0, z+0) )
-        self.updateFluid( (x+0, y+1, z+0) )
-        self.updateFluid( (x+0, y-1, z+0) )
-        self.updateFluid( (x+0, y+0, z+1) )
-        self.updateFluid( (x+0, y+0, z-1) )
+        self.updateFluid( (x, y, z), depth=depth )
+
+        self.updateFluid( (x+1, y+0, z+0), depth=depth )
+        self.updateFluid( (x-1, y+0, z+0), depth=depth )
+        self.updateFluid( (x+0, y+1, z+0), depth=depth )
+        self.updateFluid( (x+0, y-1, z+0), depth=depth )
+        self.updateFluid( (x+0, y+0, z+1), depth=depth )
+        self.updateFluid( (x+0, y+0, z-1), depth=depth )
 
     def chunkToDict(self) :
         j = {}
