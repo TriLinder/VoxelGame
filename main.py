@@ -12,15 +12,6 @@ from camera import Camera
 from textures import TextureManager
 from shaderProgram import ShaderProgramManager
 
-class Color :
-    def __init__(self, rgb) -> None:
-        self.r = rgb[0]
-        self.g = rgb[1]
-        self.b = rgb[2]
-    
-    def normalize(self) :
-        return (self.r/255, self.g/255, self.b/255)
-
 class GraphicsEngine :
     def __init__(self, windowSize=(1600, 900)) :
         pg.init()
