@@ -96,15 +96,18 @@ class EntityPhysics :
         if not self.entity.onGround :
             return
 
-        if self.velX < 0 :
-            self.velX += 0.01
-        elif self.velX > 0 :
-            self.velX -= 0.01
-        
-        if self.velZ < 0 :
-            self.velZ += 0.01
-        elif self.velZ > 0 :
-            self.velZ -= 0.01
+        for _ in range(round(self.app.deltaTime / 15)) :
+            if self.velX < 0 :
+                self.velX += 0.01
+            elif self.velX > 0 :
+                self.velX -= 0.01
+            
+            if self.velZ < 0 :
+                self.velZ += 0.01
+            elif self.velZ > 0 :
+                self.velZ -= 0.01
+
+            self.stopSlowMovement()
         
     def stopSlowMovement(self) :
         if round(self.velX, 2) == 0.0 :
@@ -199,6 +202,5 @@ class EntityPhysics :
 
         self.gravity()
         self.friction()
-        self.stopSlowMovement()
 
         self.move()
