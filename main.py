@@ -72,7 +72,7 @@ class GraphicsEngine :
         pg.quit()
         sys.exit(0)
 
-    def check_events(self) :
+    def checkEvents(self) :
         self.pgEvents = pg.event.get()
 
         for e in self.pgEvents :
@@ -92,6 +92,10 @@ class GraphicsEngine :
                 self.camera.aspectRatio = e.x / e.y
                 self.ui.resize()
     
+    def updateWindowCaption(self) :
+        fps = round(self.ui.app.clock.get_fps())
+        pg.display.set_caption(f"Voxel Engine | {fps}fps")
+
     def render(self) :
         #Clear framebuffer
         self.ctx.clear(color=((42/255, 42/255, 42/255)))
@@ -111,13 +115,14 @@ class GraphicsEngine :
         
         while True :
             self.getTime()
-            self.check_events()
+            self.checkEvents()
             self.player.tick()
             self.camera.update()
             self.scene.tick()
             self.ui.tick()
             self.render()
             self.deltaTime = self.clock.tick(self.config.fpsLimit)
+            self.updateWindowCaption()
 
 if __name__ == "__main__" :
     app = GraphicsEngine()
