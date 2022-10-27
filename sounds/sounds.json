@@ -6,5 +6,13 @@
     "footsteps": {
         "generic": ["footsteps/generic/1.ogg", "footsteps/generic/2.ogg", "footsteps/generic/3.ogg", "footsteps/generic/4.ogg", "footsteps/generic/5.ogg", "footsteps/generic/6.ogg"],
         "fluid": ["footsteps/fluid/1.ogg", "footsteps/fluid/2.ogg", "footsteps/fluid/3.ogg", "footsteps/fluid/4.ogg", "footsteps/fluid/5.ogg"]
+    },
+
+    "blockPlace": {
+        "generic": ["blockPlace/generic/1.ogg", "blockPlace/generic/2.ogg", "blockPlace/generic/3.ogg", "blockPlace/generic/4.ogg", "blockPlace/generic/5.ogg"]
+    },
+
+    "blockDestroy": {
+        "generic": ["blockDestroy/generic/1.ogg", "blockDestroy/generic/2.ogg", "blockDestroy/generic/3.ogg", "blockDestroy/generic/4.ogg", "blockDestroy/generic/5.ogg"]
     }
 }

@@ -24,6 +24,7 @@ class Block :
         self.physicalBlock = False
         self.isFluid = False
         self.flags = []
+        self.sounds = {}
         
     
     def changeId(self, newId) :
@@ -35,6 +36,8 @@ class Block :
         self.flags = blockInfo[self.id]["flags"]
         self.physicalBlock = not "nonPhysical" in self.flags
         self.isFluid = "fluid" in self.flags
+
+        self.sounds = blockInfo[self.id]["sounds"]
 
         self.updateObject()
 

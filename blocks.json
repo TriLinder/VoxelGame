@@ -2,54 +2,90 @@
     "FALLBACK": {
         "model": "cube",
         "faceTextures": ["FALLBACK/block.png", "FALLBACK/block.png", "FALLBACK/block.png", "FALLBACK/block.png", "FALLBACK/block.png", "FALLBACK/block.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "air" :{
         "model": null,
         "faceTextures": [],
-        "flags": ["nonPhysical", "transparent", "nonObject", "brokenByFluids"]
+        "flags": ["nonPhysical", "transparent", "nonObject", "brokenByFluids"],
+        "sounds" :{
+            "destroy": null,
+            "place": null
+        }
     }
 
     ,"grass": {
         "model": "cube",
         "faceTextures": ["grass/sides.png", "grass/sides.png", "grass/top.png", "grass/bottom.png", "grass/sides.png", "grass/sides.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "dirt": {
         "model": "cube",
         "faceTextures": ["dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png", "dirt/all.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "gravel": {
         "model": "cube",
         "faceTextures": ["gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "stone": {
         "model": "cube",
         "faceTextures": ["stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "log": {
         "model": "cube",
         "faceTextures": ["log/all.png", "log/all.png", "log/all.png", "log/all.png", "log/all.png", "log/all.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "leaves": {
         "model": "cube",
         "faceTextures": ["leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png", "leaves/all.png"],
-        "flags": []
+        "flags": [],
+        "sounds" :{
+            "destroy": "generic",
+            "place": "generic"
+        }
     },
 
     "water": {
         "model": "cube",
         "faceTextures": ["water/all.png", "water/all.png", "water/all.png", "water/all.png", "water/all.png", "water/all.png"],
-        "flags": ["fluid", "nonPhysical"]
+        "flags": ["fluid", "nonPhysical"],
+        "sounds" :{
+            "destroy": null,
+            "place": null
+        }
     }
 }

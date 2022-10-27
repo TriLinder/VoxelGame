@@ -83,6 +83,10 @@ class Player :
                 self.lastPunchTimestamp = self.app.time
 
                 block = self.lookingAt
+
+                if block.sounds["destroy"] :
+                    self.app.sound.play("blockDestroy", block.sounds["destroy"], volume=0.22)
+
                 block.changeId("air")
                 chunk = block.chunk
                 chunk.cullNeighbors(block.chunkRelativePos)
@@ -97,6 +101,9 @@ class Player :
                 chunk.cullNeighbors(block.chunkRelativePos)
 
                 chunk.updateNeighborFluids(block.chunkRelativePos)
+
+                if block.sounds["place"] :
+                    self.app.sound.play("blockPlace", block.sounds["place"], volume=0.22)
         elif self.ui.isPressed("blockPick") : #Pick block
             if self.lookingAt :
                 block = self.lookingAt
