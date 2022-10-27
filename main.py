@@ -119,6 +119,7 @@ class GraphicsEngine :
         return image
 
     def quit(self) :
+        print("Quiting!")
         self.scene.destroy()
         pg.quit()
         sys.exit(0)
@@ -180,4 +181,8 @@ class GraphicsEngine :
 
 if __name__ == "__main__" :
     app = GraphicsEngine()
-    app.run()
+
+    try :
+        app.run()
+    except KeyboardInterrupt :
+        app.quit()
