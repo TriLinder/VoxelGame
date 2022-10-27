@@ -53,11 +53,16 @@ class Scene :
         directory = os.path.join("saves", self.worldId)
         os.makedirs(directory, exist_ok=True)
 
-        file = os.path.join(directory, "info.json")
+        infoFile = os.path.join(directory, "info.json")
 
-        with open(file, "w") as f :
+        screenshot = self.app.takeScreenshot(drawUi=False, save=False)
+        screenshotFile = os.path.join(directory, "screenshot.png")
+
+        with open(infoFile, "w") as f :
             f.write(json.dumps(self.saveToDict(), indent=4))
-    
+
+        screenshot.save(screenshotFile)
+
     def loadFromFile(self, worldId) :
         infoFile = os.path.join("saves", worldId, "info.json")
 
@@ -113,6 +118,9 @@ class Scene :
             return None
     
     def destroy(self) :
+        if self.app.inGame :
+            self.saveToFile()
+
         toDestroy = []
 
         for chunk in self.loadedChunks.values() :
@@ -122,9 +130,6 @@ class Scene :
         
         for chunkCoords in toDestroy :
             del self.loadedChunks[chunkCoords]
-
-        if self.app.inGame :
-            self.saveToFile()
 
     def tick(self) :
         if self.app.inGame :

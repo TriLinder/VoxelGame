@@ -146,6 +146,7 @@ class WorldListMenu :
         self.outerButtonFrame.pack(newWorldButton)
 
         self.selectedButton = None
+        self.mouseOverSave = None
         
         self.reloadList()
         self.resize()
@@ -160,12 +161,12 @@ class WorldListMenu :
             self.pgmList.add.label("Try creating one.")
 
         for world in self.saves :
-            worldFrame = self.pgmList.add.frame_v(border_color=(255, 255, 255), border_width=1, width=800, height=155)
+            worldFrame = self.pgmList.add.frame_v(border_color=(255, 255, 255), background_color=(42, 42, 42), border_width=1, width=800, height=155, frame_id=f"frame_{world.worldId}")
             
-            nameElement = self.pgmList.add.label(world.worldName, align=pgm.locals.ALIGN_LEFT)
-            lastPlayedElement = self.pgmList.add.label(f"Last played: {world.getLastPlayed()}", align=pgm.locals.ALIGN_LEFT)
+            nameElement = self.pgmList.add.label(world.worldName, align=pgm.locals.ALIGN_LEFT, label_id=f"name_{world.worldId}")
+            lastPlayedElement = self.pgmList.add.label(f"Last played: {world.getLastPlayed()}", align=pgm.locals.ALIGN_LEFT, label_id=f"lastPlayed_{world.worldId}")
             
-            buttonFrame = self.pgmList.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=50, padding=(0,0,0,0))
+            buttonFrame = self.pgmList.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=50, padding=(0,0,0,0), frame_id=f"buttonFrame_{world.worldId}")
             
             playButton = self.pgmList.add.button("PLAY", self.playButtonPress, align=pgm.locals.ALIGN_RIGHT, button_id=f"play_{world.worldId}", onselect=self.worldButtonSelect)
             deleteButton = self.pgmList.add.button("DELETE", self.deleteButtonPress, align=pgm.locals.ALIGN_RIGHT, button_id=f"delete_{world.worldId}", onselect=self.worldButtonSelect)
@@ -213,6 +214,18 @@ class WorldListMenu :
 
     def goBackButton(self) :
         self.menu.currentScreen = "main"
+    
+    def drawSaveScreenshot(self, worldId) :
+        for save in self.saves :
+            if save.worldId == worldId :
+                break
+        
+        img = save.screenshot
+
+        img = pg.transform.smoothscale(img, self.ui.res)
+        img.set_alpha(150)
+        pg.draw.rect(self.ui.surface, (0,0,0), [0, 0, self.ui.res[0], self.ui.res[1]])
+        self.ui.surface.blit(img, img.get_rect())
 
     def resize(self) :
         width, height = self.ui.surface.get_size()
@@ -227,7 +240,20 @@ class WorldListMenu :
         except RecursionError : #Fix pygame_menu crash when pressing the up arrow
             pass
 
+        mouseOverWidget = self.pgmList.get_mouseover_widget()
+
+        if mouseOverWidget :
+            widgetID = mouseOverWidget.get_id()
+            
+            if "_" in widgetID :
+                self.mouseOverSave = widgetID.split("_")[1]
+        else :
+            self.mouseOverSave = None
+
     def draw(self) :
+        if self.mouseOverSave :
+            self.drawSaveScreenshot(self.mouseOverSave)
+
         self.pgmList.draw(self.ui.surface)
         self.pgmOuter.draw(self.ui.surface)
 

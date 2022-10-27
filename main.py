@@ -72,11 +72,12 @@ class GraphicsEngine :
             pg.display.toggle_fullscreen()
 
 
-    def takeScreenshot(self, save=True) :
-        print("Taking screenshot")
-
+    def takeScreenshot(self, save=True, drawUi=True) :
         #Take screenshot
-        self.ui.redrawNextFrame = True
+        self.ui.surface.fill((0, 0, 0, 0))
+        self.ui.redrawNextFrame = drawUi
+        self.ui.redrawInTicks = 2
+        self.ui.writeToTexture()
         self.render(flip=False)
         
         data = self.ctx.fbo.read(viewport=self.windowSize, alignment=1)

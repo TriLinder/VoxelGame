@@ -2,6 +2,7 @@ import json
 import os
 import time
 import shutil
+import pygame as pg
 
 class SaveManager :
     def __init__(self, app) -> None :
@@ -17,6 +18,7 @@ class SaveManager :
             dir = os.path.join("saves", dir)
 
             infoFile = os.path.join(dir, "info.json")
+            screenshotFile = os.path.join(dir, "screenshot.png")
 
             if not os.path.isfile(infoFile) :
                 continue
@@ -25,6 +27,8 @@ class SaveManager :
                 info = json.loads(f.read())
         
             save = Save(worldName=info["worldName"], worldId=info["worldId"], seed=info["seed"], lastPlayed=info["lastPlayed"], playerInfo=info["player"])
+            save.loadScreenshot(screenshotFile)
+
             saves.append(save)
         
         saves.sort(key=lambda save: save.lastPlayed, reverse=True)
@@ -54,6 +58,11 @@ class Save :
         self.seed = None
         self.lastPlayed = lastPlayed
         self.playerInfo = playerInfo
+
+        self.screenshot = None
+
+    def loadScreenshot(self, path) :
+        self.screenshot = pg.image.load(path)
 
     def getLastPlayed(self) :
         localTime = time.localtime(self.lastPlayed)
