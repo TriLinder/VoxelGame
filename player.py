@@ -52,12 +52,12 @@ class Player :
     def inVoid(self) :
         return self.position[1] < -5
     
-    def losBlock(self, maxRange) :
+    def losBlock(self, maxRange, precision=10) :
         forward = self.physics.forward
         lastEmptyBlock = None
 
-        for r in range(maxRange) :
-            pos = self.camera.position + forward * r
+        for r in range(maxRange * precision) :
+            pos = self.camera.position + forward * (r / precision)
 
             chunk = self.scene.chunkObjectFromBlockCoords(pos.x, pos.z)
             if chunk :
