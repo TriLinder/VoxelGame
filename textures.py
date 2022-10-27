@@ -7,6 +7,9 @@ class TextureManager :
         self.ctx = self.app.ctx
         
         self.textures = {}
+
+        self.iconPath = os.path.join("textures", "icon.png")
+        self.iconTexture = pg.image.load(self.iconPath)
     
     def getTexture(self, name) :
         if not name in self.textures :

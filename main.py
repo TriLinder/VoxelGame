@@ -63,6 +63,9 @@ class GraphicsEngine :
         #Player
         self.player = Player(self)
 
+        pg.display.set_caption("Voxel Engine | ??fps")
+        pg.display.set_icon(self.textureMan.iconTexture)
+
         if self.config.fullscreen :
             pg.display.toggle_fullscreen()
 
