@@ -53,7 +53,7 @@ class SoundPool :
 
         c = pg.mixer.find_channel(force=False)
 
-        c.set_volume(volume)
+        c.set_volume(volume * self.soundE.app.config.volume)
 
         if c :
             c.play(sound)

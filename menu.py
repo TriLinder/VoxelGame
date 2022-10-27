@@ -334,6 +334,7 @@ class SettingsMenu :
         self.pgm.add.range_slider("Render distance:", default=self.config.renderDistance, range_values=(1, 8), increment=1, onchange=self.renderDistanceSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("Mouse sensitivity:", default=self.config.mouseSensitivity, range_values=(1, 100), increment=5, onchange=self.mouseSensitivitySlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("FPS Limit:", default=self.config.fpsLimit, range_values=(15, 120), increment=5, onchange=self.fpsLimitSlider, value_format=lambda x: str(round(x)))
+        self.pgm.add.range_slider("Volume:", default=self.config.volume*100, range_values=(0, 100), increment=15, onchange=self.volumeSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.range_slider("FOV:", default=self.config.fov, range_values=(15, 120), increment=10, onchange=self.fovSlider, value_format=lambda x: str(round(x)))
         self.pgm.add.button("KEYBINDS", self.keybindsButton)
         self.pgm.add.button("GO BACK", self.goBackButton)
@@ -351,6 +352,10 @@ class SettingsMenu :
         value = round(value)
         self.config.fpsLimit = value
     
+    def volumeSlider(self, value) :
+        value = round(value) / 100
+        self.config.volume = value
+
     def mouseSensitivitySlider(self, value) :
         value = round(value)
         self.config.mouseSensitivity = value
