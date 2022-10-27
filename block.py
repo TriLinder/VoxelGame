@@ -10,6 +10,7 @@ class Block :
         self.app = app
         self.chunk = chunk
 
+        self.id = None
         self.changeId(id)
         self.pos = pos
 
@@ -26,6 +27,9 @@ class Block :
         
     
     def changeId(self, newId) :
+        if self.id == newId :
+            return
+
         self.id = newId
 
         self.flags = blockInfo[self.id]["flags"]

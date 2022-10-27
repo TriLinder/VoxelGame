@@ -1,7 +1,7 @@
-from shaderProgram import ShaderProgramManager
 import pygame as pg
 import numpy as np
 import glm
+import random
 import os
 
 shadersDirectory = "shaders"
@@ -55,19 +55,23 @@ class Face :
 
         self.pos = pos
         self.setRotation(rot)
-        self.textureID = texture        
+        self.textureID = texture
+
+        self.brightness = glm.c_float(pos[1]/32)
 
         self.modelM = self.getModelMatrix()
         self.onInit()
     
     def onInit(self) :
         self.shaderProgram['m_model'].write(self.modelM)
-    
+        self.shaderProgram['in_brightness'].write(glm.c_float(1))
+
     def update(self) :
         self.modelM = self.getModelMatrix()
 
         self.shaderProgram['m_model'].write(self.modelM)
         self.shaderProgram['m_view'].write(self.app.camera.viewM)
+        self.shaderProgram['in_brightness'].write(self.brightness)
 
     def getModelMatrix(self) :
         modelMatrix = glm.mat4()

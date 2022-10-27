@@ -36,7 +36,7 @@ class ShaderProgramManager :
 
         return self.shaders[name][textureID]
     
-    def updateCamera(self) :
+    def updateCamera(self) : #Used when updating camera FOV in menu
         for name in self.shaders :
             for shaderProgram in self.shaders[name].values() :
                 try :
