@@ -54,8 +54,6 @@ class EntityPhysics :
 
         if self.inFluid :
             speed *= 0.25
-        
-        self.disableGravity = False
 
         velocity = (self.velX, self.velY, self.velZ)
         movementKeyPressed = False
@@ -76,17 +74,16 @@ class EntityPhysics :
         self.velX, self.velY, self.velZ = velocity
 
         if self.ui.isPressed("jump") and self.entity.onGround :
-            if not self.inFluid :
-                self.jump()
-            else :
-                self.disableGravity = True
-                self.swimUp()
+            self.jump()
 
         self.app.ctx.wireframe = self.ui.isPressed("wireframe") #Show wireframe when held down
         self.app.ui.showDebugElements = self.ui.isPressed("debugInfo") #Show debug UI elements when held down
 
         if movementKeyPressed :
-            self.app.sound.play("footsteps", "generic", volume=.42)
+            if not self.inFluid :
+                self.app.sound.play("footsteps", "generic", volume=.42)
+            else :
+                self.app.sound.play("footsteps", "fluid", volume=.22)
 
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 
@@ -132,10 +129,6 @@ class EntityPhysics :
 
             self.velY = 1.5
             self.move()
-    
-    def swimUp(self) :
-        self.entity.position += glm.vec3(0, 0.01*self.app.deltaTime, 0)
-        self.entity.onGround = False
 
     def onGroundCheck(self) :
         chunkX, chunkZ = self.entity.getChunk()

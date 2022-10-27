@@ -4,6 +4,7 @@
     },
 
     "footsteps": {
-        "generic": ["footsteps/generic/1.ogg", "footsteps/generic/2.ogg", "footsteps/generic/3.ogg", "footsteps/generic/4.ogg", "footsteps/generic/5.ogg", "footsteps/generic/6.ogg"]
+        "generic": ["footsteps/generic/1.ogg", "footsteps/generic/2.ogg", "footsteps/generic/3.ogg", "footsteps/generic/4.ogg", "footsteps/generic/5.ogg", "footsteps/generic/6.ogg"],
+        "fluid": ["footsteps/fluid/1.ogg", "footsteps/fluid/2.ogg", "footsteps/fluid/3.ogg", "footsteps/fluid/4.ogg", "footsteps/fluid/5.ogg"]
     }
 }

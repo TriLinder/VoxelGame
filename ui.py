@@ -252,6 +252,7 @@ class DebugScreen :
         self.lines.append(f"Selected block: {playerEntity.selectedBlockId}")
         self.lines.append(f"Looking at: {lookingAt}")
         self.lines.append(f"On ground: {playerEntity.onGround}")
+        self.lines.append(f"Gravity: {not playerPhysics.disableGravity}")
         self.lines.append(f"In fluid: {playerPhysics.inFluid}")
         self.lines.append("")
         self.lines.append(f"Seed: {self.ui.app.scene.worldGen.seed}")
