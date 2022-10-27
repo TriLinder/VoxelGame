@@ -25,6 +25,9 @@ class SoundEngine :
     def play(self, category, poolId, pos=None, volume=1.0, force=False) :
         self.soundPools[category][poolId].play(pos=pos, volume=volume, force=force)
 
+    def stop(self, category, poolId, fadeout=None) :
+        self.soundPools[category][poolId].stop(fadeout=fadeout)
+
     def getPgSound(self, path) :
         if not path in self.pgSounds :
             self.pgSounds[path] = pg.mixer.Sound(os.path.join(soundsDir, path))
@@ -38,6 +41,7 @@ class SoundPool :
         self.poolPgSounds = []
 
         self.soundEndTime = -1
+        self.channel = None
 
         for path in self.poolPaths :
             self.poolPgSounds.append(soundE.getPgSound(path))
@@ -58,3 +62,11 @@ class SoundPool :
         if c :
             c.play(sound)
             self.soundEndTime = self.soundE.app.time + sound.get_length()
+            self.channel = c
+    
+    def stop(self, fadeout=None) :
+        if self.channel and (not self.soundE.app.time > self.soundEndTime) :
+            if fadeout :
+                self.channel.fadeout(fadeout)
+            else :
+                self.channel.stop()

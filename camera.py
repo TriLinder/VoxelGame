@@ -38,6 +38,11 @@ class Camera :
 
         self.inFluid = physics.isBlockFluid(self.position)
 
+        if self.inFluid :
+            self.app.sound.play("ambient", "underwater")
+        else :
+            self.app.sound.stop("ambient", "underwater", fadeout=500)
+
     def update(self) :
         if self.app.gamePaused :
             pg.mouse.get_rel() #Prevent camera from turning a lot after unpause
