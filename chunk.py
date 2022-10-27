@@ -70,8 +70,11 @@ class Chunk :
                 for y in range(terrainHeight-3, terrainHeight) :
                     self.blocks[x][y][z].changeId("dirt")
                 
-                self.blocks[x][terrainHeight][z].changeId("grass")
-    
+                if y >= waterLevel-1 :
+                    self.blocks[x][terrainHeight][z].changeId("grass")
+                else :
+                    self.blocks[x][terrainHeight][z].changeId("gravel")
+
     def generateTrees(self) :
         for x in range(chunkSize) :
             for z in range(chunkSize) :

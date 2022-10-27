@@ -23,6 +23,12 @@
         "flags": []
     },
 
+    "gravel": {
+        "model": "cube",
+        "faceTextures": ["gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png", "gravel/all.png"],
+        "flags": []
+    },
+
     "stone": {
         "model": "cube",
         "faceTextures": ["stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png", "stone/all.png"],
