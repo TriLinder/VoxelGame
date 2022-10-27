@@ -1,5 +1,7 @@
 import pygame as pg
+from PIL import Image
 import moderngl as mgl
+from datetime import datetime
 import sys
 
 from model import *
@@ -70,6 +72,43 @@ class GraphicsEngine :
             pg.display.toggle_fullscreen()
 
 
+    def takeScreenshot(self, save=True) :
+        print("Taking screenshot")
+
+        #Take screenshot
+        self.ui.redrawNextFrame = True
+        self.render(flip=False)
+        
+        data = self.ctx.fbo.read(viewport=self.windowSize, alignment=1)
+        image = Image.frombytes("RGB", self.windowSize, data)
+        image = image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+
+        #Save the image
+        if save :
+            if not os.path.isdir("screenshots") :
+                os.mkdir("screenshots")
+
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+            foundFilename = False
+            index = 0
+
+            while not foundFilename :
+                if index == 0 :
+                    filename = f"{date}.png"
+                else :
+                    filename = f"{date}_{index}.png"
+                path = os.path.join("screenshots", filename)
+
+                if not os.path.isfile(path) :
+                    foundFilename = True
+                else :
+                    index += 1
+
+            image.save(path)
+        
+        return image
+
     def quit(self) :
         self.scene.destroy()
         pg.quit()
@@ -89,6 +128,8 @@ class GraphicsEngine :
                 self.ui.redrawInTicks = 2
                 self.config.fullscreen = not self.config.fullscreen
                 self.config.writeToFile()
+            if e.type == pg.KEYDOWN and e.key == pg.K_F2 : #Take screenshot
+                self.takeScreenshot()
             if e.type == pg.WINDOWSIZECHANGED : #Resize camera and UI
                 self.windowSize = (e.x, e.y)
 
@@ -99,7 +140,7 @@ class GraphicsEngine :
         fps = round(self.ui.app.clock.get_fps())
         pg.display.set_caption(f"Voxel Engine | {fps}fps")
 
-    def render(self) :
+    def render(self, flip=True) :
         #Clear framebuffer
         self.ctx.clear(color=((42/255, 42/255, 42/255)))
 
@@ -107,8 +148,9 @@ class GraphicsEngine :
         self.scene.render()
         self.ui.render()
 
-        #Swap buffers
-        pg.display.flip()
+        if flip :
+            #Swap buffers
+            pg.display.flip()
     
     def getTime(self) :
         self.time = pg.time.get_ticks() / 1000
