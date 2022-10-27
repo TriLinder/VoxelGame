@@ -10,12 +10,12 @@ class Cube :
     def __init__(self, app, pos=(0,0,0), rot=(0,0,0), textures=["test.png","test.png","test.png","test.png","test.png","test.png"]) -> None:
         self.faces = []
 
-        self.faces.append({"object": Face(app, pos=(pos[0]+0.5, pos[1]+0, pos[2]+0), rot=(0,90,0), texture=textures[0]), "visible": True})     # +x
-        self.faces.append({"object": Face(app, pos=(pos[0]-0.5, pos[1]+0, pos[2]+0), rot=(0,-90,0), texture=textures[1]), "visible": True})    # -x
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0.5, pos[2]+0), rot=(-90,0,0), texture=textures[2]), "visible": True})    # +y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-0.5, pos[2]+0), rot=(90,0,0), texture=textures[3]), "visible": True})     # -y
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+0.5), rot=(0,0,0), texture=textures[4]), "visible": True})      # +z
-        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-0.5), rot=(0,180,0), texture=textures[5]), "visible": True})    # -z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0.5, pos[1]+0, pos[2]+0), rot=(0,90,0), brightness=1.0, texture=textures[0]), "visible": True})# +x
+        self.faces.append({"object": Face(app, pos=(pos[0]-0.5, pos[1]+0, pos[2]+0), rot=(0,-90,0), brightness=0.75, texture=textures[1]), "visible": True})# -x
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0.5, pos[2]+0), rot=(-90,0,0), brightness=1.0, texture=textures[2]), "visible": True})# +y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]-0.5, pos[2]+0), rot=(90,0,0), brightness=0.75, texture=textures[3]), "visible": True})# -y
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]+0.5), rot=(0,0,0), brightness=0.75, texture=textures[4]), "visible": True})# +z
+        self.faces.append({"object": Face(app, pos=(pos[0]+0, pos[1]+0, pos[2]-0.5), rot=(0,180,0), brightness=1.0, texture=textures[5]), "visible": True})# -z
     
     def render(self) :
         for face in self.faces :
@@ -45,7 +45,7 @@ class Billboard :
             face["object"].destroy()
 
 class Face :
-    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), texture="test.png") -> None:
+    def __init__(self, app, pos=(0,0,0), rot=(0,0,0), brightness=1, texture="test.png") -> None:
         self.app = app
         self.ctx = app.ctx
         self.textureMan = app.textureMan
@@ -57,14 +57,9 @@ class Face :
         self.setRotation(rot)
         self.textureID = texture
 
-        self.brightness = glm.c_float(pos[1]/32)
+        self.brightness = glm.c_float(brightness)
 
         self.modelM = self.getModelMatrix()
-        self.onInit()
-    
-    def onInit(self) :
-        self.shaderProgram['m_model'].write(self.modelM)
-        self.shaderProgram['in_brightness'].write(glm.c_float(1))
 
     def update(self) :
         self.modelM = self.getModelMatrix()

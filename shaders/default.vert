@@ -9,7 +9,7 @@ out float brightness;
 uniform mat4 m_proj;
 uniform mat4 m_view;
 uniform mat4 m_model;
-uniform float in_brightness = 1;
+uniform float in_brightness;
 
 void main() {
     uv_0 = in_texcoord_0;
