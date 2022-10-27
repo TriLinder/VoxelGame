@@ -18,6 +18,9 @@ class Menu :
 
         self.resize()
 
+    def playClickSound(self) :
+        self.ui.app.sound.play("ui", "click", volume=0.25)
+
     def tick(self) :
         if (not self.visible) and self.ui.app.gamePaused and self.ui.app.inGame :
             self.currentScreen = "pause"
@@ -52,6 +55,7 @@ class Menu :
 
         if self.currentScreen :
             self.screens[self.currentScreen].draw()
+    
 
 # ------------------ #
 
@@ -73,6 +77,7 @@ class PauseMenu :
         self.ui.redrawInTicks = 2
 
     def settingsButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "settings"
     
     def mainMenuButton(self) :
@@ -83,6 +88,7 @@ class PauseMenu :
         self.ui.redrawInTicks = 2
 
         self.menu.currentScreen = "main"
+        self.menu.playClickSound()
         self.menu.screens["worldList"].reloadList()
 
     def tick(self) :
@@ -107,9 +113,11 @@ class MainMenu :
         self.pgm.add.button("QUIT", self.quitButton)
 
     def playButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "worldList"
 
     def settingsButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "settings"
     
     def quitButton(self) :
@@ -190,6 +198,8 @@ class WorldListMenu :
             return
         
         if self.selectedButton.startswith("play_") :
+            self.menu.playClickSound()
+
             worldId = self.selectedButton[5:]
 
             self.ui.app.scene.loadFromFile(worldId)
@@ -204,15 +214,19 @@ class WorldListMenu :
             return
         
         if self.selectedButton.startswith("delete_") :
+            self.menu.playClickSound()
+            
             worldId = self.selectedButton[7:]
         
             self.saveMan.deleteSave(worldId)
             self.reloadList()
     
     def newWorldButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "createWorld"
 
     def goBackButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "main"
     
     def drawSaveScreenshot(self, worldId) :
@@ -303,10 +317,12 @@ class CreateWorldMenu :
             seedString = None
         
         self.saveMan.newWorld(name=worldName, seed=seedString)
+        self.menu.playClickSound()
         self.menu.currentScreen = None
         self.reset()
 
     def goBackButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "worldList"
         self.reset();
 
@@ -340,6 +356,8 @@ class SettingsMenu :
         self.pgm.add.button("GO BACK", self.goBackButton)
 
     def fullscreenSwitchChange(self, value) :
+        self.menu.playClickSound()
+
         self.config.fullscreen = value
         self.ui.redrawInTicks = 2
         pg.display.toggle_fullscreen()
@@ -368,9 +386,11 @@ class SettingsMenu :
         self.ui.app.shaderMan.updateCamera()
 
     def keybindsButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "keybinds"
 
     def goBackButton(self) :
+        self.menu.playClickSound()
         self.config.writeToFile()
 
         if not self.ui.app.inGame :
@@ -456,10 +476,12 @@ class Keybinds :
             name = self.keycodeToName(self.config.keybinds[buttonId])
             self.waitingForInput.set_title(name)
         
+        self.menu.playClickSound()
         self.waitingForInput = widget
         widget.set_title("...")
 
     def goBackButton(self) :
+        self.menu.playClickSound()
         self.menu.currentScreen = "settings"
 
     def checkForInput(self) :

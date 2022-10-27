@@ -1,6 +1,7 @@
 {
     "ui": {
-        "screenshot": ["ui/screenshot.ogg"]
+        "screenshot": ["ui/screenshot.ogg"],
+        "click": ["ui/click.ogg"]
     },
 
     "footsteps": {
