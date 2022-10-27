@@ -15,13 +15,15 @@ class SoundEngine :
         self.pgSounds = {}
         self.soundPools = {}
 
+        pg.mixer.set_num_channels(32)
+
         for category in soundList :
             self.soundPools[category] = {}
             for poolId in soundList[category] :
                 self.soundPools[category][poolId] = SoundPool(self, soundList[category][poolId])
     
-    def play(self, category, poolId) :
-        self.soundPools[category][poolId].play()
+    def play(self, category, poolId, pos=None, volume=1.0, force=False) :
+        self.soundPools[category][poolId].play(pos=pos, volume=volume, force=force)
 
     def getPgSound(self, path) :
         if not path in self.pgSounds :
@@ -35,13 +37,24 @@ class SoundPool :
         self.poolPaths = pool
         self.poolPgSounds = []
 
+        self.soundEndTime = -1
+
         for path in self.poolPaths :
             self.poolPgSounds.append(soundE.getPgSound(path))
         
-    def play(self, index=None) :
+    def play(self, index=None, pos=None, volume=1.0, force=False) :
+        if not self.soundE.app.time > self.soundEndTime and (not force) : #Sound already playing
+            return
+        
         if index :
             sound = self.poolPgSounds[index]
         else :
             sound = random.choice(self.poolPgSounds)
 
-        sound.play()
+        c = pg.mixer.find_channel(force=False)
+
+        c.set_volume(volume)
+
+        if c :
+            c.play(sound)
+            self.soundEndTime = self.soundE.app.time + sound.get_length()

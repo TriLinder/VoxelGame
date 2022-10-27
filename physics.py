@@ -58,15 +58,20 @@ class EntityPhysics :
         self.disableGravity = False
 
         velocity = (self.velX, self.velY, self.velZ)
+        movementKeyPressed = False
 
         if self.ui.isPressed("forward") and self.entity.onGround :
             velocity = nonYForward * speed
+            movementKeyPressed = True
         if self.ui.isPressed("left") and self.entity.onGround :
             velocity = self.left * speed
+            movementKeyPressed = True
         if self.ui.isPressed("backwards") and self.entity.onGround :
             velocity = nonYBackwards * speed
+            movementKeyPressed = True
         if self.ui.isPressed("right") and self.entity.onGround :
             velocity = self.right * speed
+            movementKeyPressed = True
 
         self.velX, self.velY, self.velZ = velocity
 
@@ -79,6 +84,9 @@ class EntityPhysics :
 
         self.app.ctx.wireframe = self.ui.isPressed("wireframe") #Show wireframe when held down
         self.app.ui.showDebugElements = self.ui.isPressed("debugInfo") #Show debug UI elements when held down
+
+        if movementKeyPressed :
+            self.app.sound.play("footsteps", "generic", volume=.42)
 
         #self.velX, self.velY, self.velZ = max(min(self.velX, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velY, self.terminalVelocity), self.terminalVelocity*-1), max(min(self.velZ, self.terminalVelocity), self.terminalVelocity*-1)
 

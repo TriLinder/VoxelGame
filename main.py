@@ -79,7 +79,7 @@ class GraphicsEngine :
     def takeScreenshot(self, save=True, drawUi=True, playSound=True) :
         #Play sound
         if playSound :
-            self.sound.play("ui", "screenshot")
+            self.sound.play("ui", "screenshot", force=True)
         
         #Take screenshot
         self.ui.surface.fill((0, 0, 0, 0))
