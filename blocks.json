@@ -31,7 +31,7 @@
 
     "log": {
         "model": "cube",
-        "faceTextures": ["log/sides.png", "log/sides.png", "leaves/all.png", "dirt/all.png", "log/sides.png", "log/sides.png"],
+        "faceTextures": ["log/all.png", "log/all.png", "log/all.png", "log/all.png", "log/all.png", "log/all.png"],
         "flags": []
     },
 
