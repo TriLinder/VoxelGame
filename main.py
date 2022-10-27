@@ -10,6 +10,7 @@ from saveManager import SaveManager
 from scene import Scene
 from config import Config
 from ui import UserInterface
+from sounds import SoundEngine
 from camera import Camera
 from textures import TextureManager
 from shaderProgram import ShaderProgramManager
@@ -48,6 +49,9 @@ class GraphicsEngine :
         #Camera
         self.camera = Camera(self)
 
+        #Sound engine
+        self.sound = SoundEngine(self)
+
         #Texture and shader managers
         self.textureMan = TextureManager(self)
         self.shaderMan = ShaderProgramManager(self)
@@ -72,7 +76,11 @@ class GraphicsEngine :
             pg.display.toggle_fullscreen()
 
 
-    def takeScreenshot(self, save=True, drawUi=True) :
+    def takeScreenshot(self, save=True, drawUi=True, playSound=True) :
+        #Play sound
+        if playSound :
+            self.sound.play("ui", "screenshot")
+        
         #Take screenshot
         self.ui.surface.fill((0, 0, 0, 0))
         self.ui.redrawNextFrame = drawUi

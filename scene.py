@@ -55,7 +55,7 @@ class Scene :
 
         infoFile = os.path.join(directory, "info.json")
 
-        screenshot = self.app.takeScreenshot(drawUi=False, save=False)
+        screenshot = self.app.takeScreenshot(drawUi=False, save=False, playSound=False)
         screenshotFile = os.path.join(directory, "screenshot.png")
 
         with open(infoFile, "w") as f :
