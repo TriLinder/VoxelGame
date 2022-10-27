@@ -62,6 +62,10 @@ class Save :
         self.screenshot = None
 
     def loadScreenshot(self, path) :
+        if not os.path.isfile(path) :
+            self.screenshot = None
+            return
+
         self.screenshot = pg.image.load(path)
 
     def getLastPlayed(self) :

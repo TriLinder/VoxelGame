@@ -73,6 +73,8 @@ class PauseMenu :
         self.resize()
     
     def resumeButton(self) :
+        self.menu.playClickSound()
+
         self.ui.app.gamePaused = False
         self.ui.redrawInTicks = 2
 
@@ -81,6 +83,8 @@ class PauseMenu :
         self.menu.currentScreen = "settings"
     
     def mainMenuButton(self) :
+        self.menu.playClickSound()
+        
         self.ui.app.scene.destroy()
         self.ui.app.inGame = False
         self.ui.app.gamePaused = True
@@ -88,8 +92,6 @@ class PauseMenu :
         self.ui.redrawInTicks = 2
 
         self.menu.currentScreen = "main"
-        self.menu.playClickSound()
-        self.menu.screens["worldList"].reloadList()
 
     def tick(self) :
         self.pgm.update(self.ui.app.pgEvents)
@@ -114,6 +116,7 @@ class MainMenu :
 
     def playButton(self) :
         self.menu.playClickSound()
+        self.menu.screens["worldList"].reloadList()
         self.menu.currentScreen = "worldList"
 
     def settingsButton(self) :
@@ -143,6 +146,7 @@ class WorldListMenu :
         self.pgmListTheme = menu.pgmTheme.copy()
         self.pgmListTheme.title_bar_style = 1004
 
+        self.pgmList = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.pgmListTheme, title='', position=(50, 50))
         self.pgmOuter = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Load a world')
         
         self.outerButtonFrame = self.pgmOuter.add.frame_h(border_color=(255, 255, 255, 0), border_width=0, width=400, height=200)
@@ -155,13 +159,13 @@ class WorldListMenu :
 
         self.selectedButton = None
         self.mouseOverSave = None
-        
-        self.reloadList()
+
         self.resize()
     
     def reloadList(self) :
-        self.pgmList = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=self.pgmListTheme, title='', position=(50, 50))
-        
+        for widget in self.pgmList.get_widgets() :
+            self.pgmList.remove_widget(widget)
+
         self.saves = self.saveMan.getSaves()
 
         if len(self.saves) == 0 :
@@ -235,6 +239,9 @@ class WorldListMenu :
                 break
         
         img = save.screenshot
+
+        if not img :
+            return
 
         img = pg.transform.smoothscale(img, self.ui.res)
         img.set_alpha(150)

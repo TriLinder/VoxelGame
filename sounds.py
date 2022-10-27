@@ -68,5 +68,7 @@ class SoundPool :
         if self.channel and (not self.soundE.app.time > self.soundEndTime) :
             if fadeout :
                 self.channel.fadeout(fadeout)
+                self.soundEndTime = self.soundE.app.time + (fadeout / 1000)
             else :
                 self.channel.stop()
+                self.soundEndTime = self.soundE.app.time + 0
