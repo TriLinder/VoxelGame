@@ -89,7 +89,7 @@ class GraphicsEngine :
             if not os.path.isdir("screenshots") :
                 os.mkdir("screenshots")
 
-            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            date = datetime.now().strftime("%Y-%m-%d %H_%M_%S")
             
             foundFilename = False
             index = 0
