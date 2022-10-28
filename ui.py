@@ -108,7 +108,7 @@ class UserInterface :
     def tick(self) :
         if self.hideUi :
             return
-            
+
         pg.event.set_grab(not self.app.gamePaused)
         pg.mouse.set_visible(self.app.gamePaused)
 
@@ -251,6 +251,7 @@ class DebugScreen :
 
         self.lines.append(f"FPS: {round(self.ui.app.clock.get_fps())}")
         self.lines.append(f"MEM: {round(memoryUsage)}MiB")
+        self.lines.append(f"GIT: {self.ui.app.commitHash[:7]}")
         self.lines.append("")
         self.lines.append(f"Pos: {playerPos}")
         self.lines.append(f"In chunk: {playerEntity.getChunk()}")

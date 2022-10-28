@@ -1,3 +1,4 @@
+GitPython==3.1.29
 glm==0.4.3
 moderngl==5.6.4
 moderngl_window==2.4.2

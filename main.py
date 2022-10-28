@@ -2,6 +2,7 @@ import pygame as pg
 from PIL import Image
 import moderngl as mgl
 from datetime import datetime
+import git
 import sys
 
 from model import *
@@ -39,6 +40,11 @@ class GraphicsEngine :
         self.time = 0
         self.deltaTime = 0
 
+        #Application
+        self.name = "VoxelEngine"
+        self.commitHash = "???"
+        self.getCommitHash()
+
         #Game info
         self.gamePaused = True
         self.inGame = False
@@ -69,12 +75,19 @@ class GraphicsEngine :
         #Player
         self.player = Player(self)
 
-        pg.display.set_caption("Voxel Engine | ??fps")
+        pg.display.set_caption("Voxel Engine (???) | ??fps")
         pg.display.set_icon(self.textureMan.iconTexture)
 
         if self.config.fullscreen :
             pg.display.toggle_fullscreen()
 
+    def getCommitHash(self) :
+        try :
+            repo = git.Repo()
+        except :
+            return
+
+        self.commitHash = repo.head.object.hexsha
 
     def takeScreenshot(self, save=True, drawUi=True, playSound=True) :
         #Play sound
@@ -152,7 +165,7 @@ class GraphicsEngine :
     
     def updateWindowCaption(self) :
         fps = round(self.ui.app.clock.get_fps())
-        pg.display.set_caption(f"Voxel Engine | {fps}fps")
+        pg.display.set_caption(f"{self.name} ({self.commitHash[:7]}) | {fps}fps")
 
     def render(self, flip=True) :
         #Clear framebuffer
