@@ -39,7 +39,7 @@ class Camera :
         self.inFluid = physics.isBlockFluid(self.position)
 
         if self.inFluid :
-            self.app.sound.play("ambient", "underwater")
+            self.app.sound.play("ambient", "underwater", loopOffset=-0.15)
         else :
             self.app.sound.stop("ambient", "underwater", fadeout=500)
 

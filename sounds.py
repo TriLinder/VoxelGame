@@ -22,8 +22,8 @@ class SoundEngine :
             for poolId in soundList[category] :
                 self.soundPools[category][poolId] = SoundPool(self, soundList[category][poolId])
     
-    def play(self, category, poolId, pos=None, volume=1.0, force=False) :
-        self.soundPools[category][poolId].play(pos=pos, volume=volume, force=force)
+    def play(self, category, poolId, volume=1.0, loopOffset=0, force=False) :
+        self.soundPools[category][poolId].play(volume=volume, loopOffset=loopOffset, force=force)
 
     def stop(self, category, poolId, fadeout=None) :
         self.soundPools[category][poolId].stop(fadeout=fadeout)
@@ -46,8 +46,8 @@ class SoundPool :
         for path in self.poolPaths :
             self.poolPgSounds.append(soundE.getPgSound(path))
         
-    def play(self, index=None, pos=None, volume=1.0, force=False) :
-        if not self.soundE.app.time > self.soundEndTime and (not force) : #Sound already playing
+    def play(self, index=None, volume=1.0, loopOffset=0, force=False) :
+        if not self.soundE.app.time > self.soundEndTime + loopOffset and (not force) : #Sound already playing
             return
         
         if index :
