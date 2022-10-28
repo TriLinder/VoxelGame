@@ -20,7 +20,7 @@ A simple 3D voxel game made in Python with [ModernGL](https://github.com/moderng
 
 ## Installation
 
-1. [Clone the repository](https://github.com/TriLinder/VoxelEngine/archive/refs/heads/main.zip)
+1. Clone the repository `git clone https://github.com/TriLinder/VoxelEngine.git`
 
 2. Install the requirements from `requirements.txt`
 

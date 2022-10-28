@@ -85,6 +85,7 @@ class GraphicsEngine :
         try :
             repo = git.Repo()
         except :
+            print('WARNING: git repository not found, please make sure you used the "git clone" command to clone the repository')
             return
 
         self.commitHash = repo.head.object.hexsha
