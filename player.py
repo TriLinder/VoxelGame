@@ -27,7 +27,7 @@ class Player :
         self.lookingAtEmptyBlock = None
         self.lastPunchTimestamp = -1
 
-        self.selectedBlockId = None
+        self.selectedBlockId = "dirt"
     
     def saveToDict(self) :
         j = {}

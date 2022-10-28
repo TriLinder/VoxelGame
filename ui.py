@@ -17,6 +17,7 @@ class UserInterface :
         self.ctx = app.ctx
         
         self.elements = []
+        self.hideUi = False
         self.showDebugElements = False
         self.debugElementsLastFrame = False
 
@@ -105,6 +106,9 @@ class UserInterface :
             element.resize()
         
     def tick(self) :
+        if self.hideUi :
+            return
+            
         pg.event.set_grab(not self.app.gamePaused)
         pg.mouse.set_visible(self.app.gamePaused)
 
@@ -122,6 +126,9 @@ class UserInterface :
         self.texture.write(textureData)
 
     def render(self) :
+        if self.hideUi :
+            return
+
         if self.redrawNextFrame :
             self.surface.fill((0, 0, 0, 0))
 

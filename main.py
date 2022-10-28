@@ -131,13 +131,17 @@ class GraphicsEngine :
             if e.type == pg.QUIT or (e.type == pg.KEYDOWN and e.key == pg.K_DELETE) : #Quit the application
                 self.quit()
             if e.type == pg.KEYDOWN and e.key == pg.K_ESCAPE and self.inGame : #Pause the game
-                self.gamePaused = not self.gamePaused
-                self.ui.redrawNextFrame = True
+                if not self.ui.hideUi :
+                    self.gamePaused = not self.gamePaused
+                    self.ui.redrawNextFrame = True
             if e.type == pg.KEYDOWN and e.key == pg.K_F11 : #Toggle fullscreen
                 pg.display.toggle_fullscreen()
                 self.ui.redrawInTicks = 2
                 self.config.fullscreen = not self.config.fullscreen
                 self.config.writeToFile()
+            if e.type == pg.KEYDOWN and e.key == pg.K_F1 : #Hide UI
+                if not self.gamePaused :
+                    self.ui.hideUi = not self.ui.hideUi
             if e.type == pg.KEYDOWN and e.key == pg.K_F2 : #Take screenshot
                 self.takeScreenshot()
             if e.type == pg.WINDOWSIZECHANGED : #Resize camera and UI
