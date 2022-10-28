@@ -1,5 +1,4 @@
 GitPython
-glm
 moderngl==5.6.4
 moderngl_window==2.4.2
 numpy
