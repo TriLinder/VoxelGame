@@ -103,6 +103,9 @@ class Scene :
     def loadChunk(self, chunkCoords=(0, 0)) :
         if not chunkCoords in self.loadedChunks :
             self.loadedChunks[chunkCoords] = Chunk(self.app, chunkCoords=chunkCoords)
+            
+            for chunk in self.loadedChunks.values() :
+                chunk.cullBorders()
 
     def chunkCoordsFromBlockCoords(self, x, z) :
         chunkX, chunkZ = math.floor(round(x) / 16), math.floor(round(z) / 16)

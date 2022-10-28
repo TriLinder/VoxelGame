@@ -133,6 +133,14 @@ class Chunk :
         try :
             return self.blocks[x][y][z].id
         except IndexError :
+            x, y, z = x + (self.chunkX * chunkSize), y, z + (self.chunkZ * chunkSize)
+            chunk = self.app.scene.chunkObjectFromBlockCoords(x, z)
+
+            if chunk :
+                block = chunk.getBlockFromAbsoulteCoords((x, y, z))
+                if block :
+                    return block.id
+
             return None
     
     def cullBlock(self, pos) :
@@ -148,6 +156,14 @@ class Chunk :
             for y in range(heightLimit) :
                 for z in range(chunkSize) :
                     self.cullBlock( (x, y, z) )
+
+    def cullBorders(self) :
+        for x in range(chunkSize) :
+            for y in range(heightLimit) :
+                self.cullBlock((x, y, 0))
+                self.cullBlock((0, y, x))
+                self.cullBlock((x*-1, y, chunkSize-1))
+                self.cullBlock((chunkSize-1, y, x*-1))
 
     def cullNeighbors(self, pos) :
         x, y, z = pos
