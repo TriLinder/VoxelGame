@@ -42,7 +42,8 @@ class GraphicsEngine :
 
         #Application
         self.name = "VoxelEngine"
-        self.commitHash = "???"
+        self.sourceCodeLink = "https://github.com/TriLinder/VoxelEngine"
+        self.commitHash = "UNKNOWN"
         self.getCommitHash()
 
         #Game info
@@ -75,7 +76,7 @@ class GraphicsEngine :
         #Player
         self.player = Player(self)
 
-        pg.display.set_caption("Voxel Engine (???) | ??fps")
+        pg.display.set_caption("Voxel Engine (UNKNOWN) | ??fps")
         pg.display.set_icon(self.textureMan.iconTexture)
 
         if self.config.fullscreen :

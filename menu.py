@@ -110,9 +110,14 @@ class MainMenu :
 
         self.pgm = pgm.Menu(width=self.ui.res[0], height=self.ui.res[1], theme=menu.pgmTheme, title='Main menu')
         
+        self.gitHashLabel = self.pgm.add.url(self.ui.app.sourceCodeLink, f"GIT: {self.ui.app.commitHash[:7].upper()}", align=pgm.locals.ALIGN_LEFT, font_color=(100, 100, 100), underline=False)
+        self.gitHashLabel.set_float(True)
+
         self.pgm.add.button("PLAY", self.playButton)
         self.pgm.add.button("SETTINGS", self.settingsButton)
         self.pgm.add.button("QUIT", self.quitButton)
+        
+        self.resize()
 
     def playButton(self) :
         self.menu.playClickSound()
@@ -128,6 +133,7 @@ class MainMenu :
     
     def resize(self) :
         width, height = self.ui.surface.get_size()
+        self.gitHashLabel.translate(0, height*0.5)
         self.pgm.resize(width, height, screen_dimension=(width, height))
 
     def tick(self) :
