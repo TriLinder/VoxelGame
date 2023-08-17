@@ -1,6 +1,6 @@
 <img title="Icon" src="textures/icon.png" alt="Icon" width="54">
 
-# Voxel Engine
+# Voxel Game
 
 A simple 3D voxel game made in Python with [ModernGL](https://github.com/moderngl/moderngl).
 
@@ -20,7 +20,7 @@ A simple 3D voxel game made in Python with [ModernGL](https://github.com/moderng
 
 ## Installation
 
-1. Clone the repository `git clone https://github.com/TriLinder/VoxelEngine.git`
+1. Clone the repository `git clone https://github.com/TriLinder/VoxelGame.git`
 
 2. Install the requirements from `requirements.txt`
 
